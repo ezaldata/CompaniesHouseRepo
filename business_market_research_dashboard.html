@@ -1,60 +1,99 @@
 <div id="register-app"></div>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 
 <style>
   #register-app, #register-app * { box-sizing: border-box; }
   #register-app {
-    --ink: #111821;
-    --panel: #1B2430;
-    --panel-2: #222D3B;
-    --panel-3: #2A3647;
-    --hairline: #334154;
-    --paper: #F0EADC;
-    --muted: #9AA5B5;
-    --brass: #C99A4B;
-    --teal: #5FA8A0;
-    --rust: #C1574A;
-    --red: #8B2E2E;
-    --green: #7ABF8E;
-    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
-    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --ink: #14213d;
+    --panel: #f8fafc;
+    --panel-2: #ffffff;
+    --panel-3: #f3f7fb;
+    --hairline: #dfe7ef;
+    --paper: #16324f;
+    --muted: #64748b;
+    --brass: #d28d3b;
+    --teal: #2f9f96;
+    --rust: #e46b63;
+    --red: #c94e56;
+    --green: #5aa96a;
+    --shadow: 0 18px 45px rgba(20, 33, 61, 0.12);
+    --font-display: "Manrope", "Segoe UI", sans-serif;
+    --font-body: "Inter", "Segoe UI", sans-serif;
     --font-mono: "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    background: radial-gradient(circle at top left, rgba(95,168,160,.18), transparent 28rem), var(--ink);
+    background: linear-gradient(135deg, #f8f3ea 0%, #f5fbff 48%, #eef4ff 100%);
     color: var(--paper);
     font-family: var(--font-body);
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid var(--hairline);
+    border-radius: 24px;
+    overflow: visible;
+    border: 1px solid rgba(20, 33, 61, 0.08);
+    box-shadow: var(--shadow);
   }
-  .rg-header { padding: 28px 28px 18px; border-bottom: 1px solid var(--hairline); }
-  .rg-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; color: var(--brass); text-transform: uppercase; margin: 0 0 8px; }
-  .rg-title { font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px); line-height: 1.05; margin: 0 0 8px; color: var(--paper); }
-  .rg-subtitle { font-size: 14px; color: var(--muted); margin: 0; max-width: 850px; }
-  .rg-banner { margin: 16px 28px 0; padding: 11px 14px; border: 1px dashed var(--brass); border-radius: 10px; font-size: 12.5px; color: var(--brass); display: flex; gap: 10px; align-items: flex-start; background: rgba(201,154,75,.06); }
-  .rg-banner b { color: var(--paper); }
-  .rg-stamp-badge { flex: none; font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; border: 1px solid var(--brass); color: var(--brass); border-radius: 999px; padding: 2px 8px; transform: rotate(-3deg); white-space: nowrap; }
-  .rg-stamp-badge.live { border-color: var(--teal); color: var(--teal); }
-  .rg-controls { display: grid; grid-template-columns: minmax(220px, 1.4fr) minmax(180px, .8fr) auto; gap: 10px; padding: 18px 28px 10px; align-items: center; }
-  .rg-controls input, .rg-controls select { background: var(--panel-2); border: 1px solid var(--hairline); color: var(--paper); font-family: var(--font-body); font-size: 13.5px; padding: 10px 12px; border-radius: 9px; min-height: 40px; }
-  .rg-controls input::placeholder { color: var(--muted); }
+  .rg-shell { padding: 0; }
+  .rg-header { padding: 30px 28px 22px; border-bottom: 1px solid var(--hairline); background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%); }
+  .rg-header-main { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .rg-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; color: var(--teal); text-transform: uppercase; margin: 0 0 8px; font-weight: 700; }
+  .rg-title { font-family: var(--font-display); font-size: clamp(30px, 4vw, 46px); line-height: 1.05; margin: 0 0 8px; color: var(--ink); font-weight: 800; }
+  .rg-subtitle { font-size: 14.5px; color: var(--muted); margin: 0; max-width: 860px; line-height: 1.7; }
+  .rg-hero-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rg-pill-large { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; border: 1px solid #dfe9f2; background: #ffffff; font-family: var(--font-mono); font-size: 11px; color: var(--ink); box-shadow: 0 6px 16px rgba(20,33,61,.06); }
+  .rg-pill-large--primary { border-color: rgba(47,159,150,.28); color: var(--teal); }
+  .rg-pill-large--accent { border-color: rgba(210,141,59,.24); color: var(--brass); }
+  .rg-quick-guide { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+  .rg-guide-card { background: linear-gradient(135deg, #ffffff, #f7fbff); border: 1px solid #e3ebf3; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 10px 20px rgba(20,33,61,.04); }
+  .rg-guide-card strong { color: var(--ink); font-size: 13px; font-family: var(--font-display); }
+  .rg-guide-card span { color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+  .rg-banner { margin: 16px 28px 0; padding: 12px 14px; border: 1px solid rgba(47,159,150,.22); border-radius: 16px; font-size: 12.5px; color: var(--ink); display: flex; gap: 10px; align-items: flex-start; background: linear-gradient(90deg, rgba(47,159,150,.08), rgba(210,141,59,.08)); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
+  .rg-banner b { color: var(--ink); }
+  .rg-stamp-badge { flex: none; font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; border: 1px solid var(--teal); color: var(--teal); border-radius: 999px; padding: 2px 8px; transform: rotate(-3deg); white-space: nowrap; background: rgba(255,255,255,.82); }
+  .rg-stamp-badge.live { border-color: var(--brass); color: var(--brass); }
+  .rg-controls { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(140px, 0.7fr) auto auto; gap: 10px; padding: 18px 28px 10px; align-items: center; }
+  .rg-place-wrapper { position: relative; }
+  .rg-place-autocomplete { position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: #fff; border: 1px solid #e6eef6; box-shadow: 0 8px 24px rgba(20,33,61,.06); border-radius: 10px; max-height: 220px; overflow-y: auto; z-index: 1100; display: none; }
+  .rg-place-autocomplete.active { display: block; }
+  .rg-place-option { padding: 9px 12px; cursor: pointer; font-size: 13px; color: var(--ink); border-bottom: 1px solid #f0f3f8; }
+  .rg-place-option:hover, .rg-place-option.selected { background: #f7fbff; }
+  .rg-explore-filters { padding: 0 28px 12px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid #e9f0f7; }
+  .rg-explore-filters .rg-place-wrapper { flex: 1; max-width: 250px; }
+  .rg-status-dropdown { position: relative; }
+  .rg-status-toggle { display: inline-flex; align-items: center; gap:8px; padding: 10px 12px; border-radius: 10px; border: 1px solid #dfe7ef; background: #fff; color: var(--ink); cursor: pointer; }
+  .rg-status-menu { position: absolute; top: calc(100% + 8px); left: 0; background: #fff; border: 1px solid #e6eef6; box-shadow: 0 8px 24px rgba(20,33,61,.06); border-radius: 10px; padding: 8px; min-width: 220px; z-index: 1200; }
+  .rg-status-menu label { display: flex; align-items: center; gap: 8px; padding: 6px 8px; font-size: 13px; color: var(--ink); }
+  .rg-controls input, .rg-controls select { background: #ffffff; border: 1px solid var(--hairline); color: var(--ink); font-family: var(--font-body); font-size: 13.5px; padding: 10px 12px; border-radius: 12px; min-height: 42px; box-shadow: 0 4px 10px rgba(20,33,61,.04); }
+  .rg-controls input::placeholder { color: #94a3b8; }
   .rg-controls input:focus, .rg-controls select:focus, .rg-status-btn:focus-visible, .rg-tab:focus-visible, .rg-card:focus-visible, .rg-loadmore:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
   .rg-status-group { grid-column: 1 / -1; display: flex; gap: 7px; flex-wrap: wrap; }
-  .rg-status-btn, .rg-tab, .rg-loadmore, .rg-mini-btn { font-family: var(--font-mono); font-size: 11.5px; border-radius: 9px; border: 1px solid var(--hairline); background: transparent; color: var(--muted); cursor: pointer; }
+  .rg-status-btn, .rg-tab, .rg-loadmore, .rg-mini-btn { font-family: var(--font-body); font-size: 11.5px; border-radius: 999px; border: 1px solid var(--hairline); background: #ffffff; color: var(--muted); cursor: pointer; transition: all .2s ease; font-weight: 600; }
   .rg-status-btn { padding: 8px 11px; }
-  .rg-status-btn.active { background: var(--panel-2); color: var(--paper); border-color: var(--cat-color, var(--brass)); }
-  .rg-export { color: var(--teal); text-decoration: none; font-family: var(--font-mono); font-size: 11.5px; border: 1px solid var(--hairline); border-radius: 9px; padding: 10px 12px; text-align: center; }
-  .rg-tabs { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 28px 16px; border-bottom: 1px solid var(--hairline); }
-  .rg-tab { padding: 9px 12px; }
-  .rg-tab.active { color: var(--paper); background: var(--panel-2); border-color: var(--teal); }
-  .rg-panel { display: none; padding: 22px 28px 28px; }
-  .rg-panel.active { display: block; }
+  .rg-status-btn.active { background: linear-gradient(135deg, var(--teal), #4bb5c9); color: #ffffff; border-color: transparent; box-shadow: 0 8px 16px rgba(47,159,150,.18); }
+  .rg-export { color: #ffffff; text-decoration: none; font-family: var(--font-body); font-size: 11.5px; border: 1px solid transparent; border-radius: 999px; padding: 10px 12px; text-align: center; background: linear-gradient(135deg, #3868f6, #4ba8ff); box-shadow: 0 8px 16px rgba(56,104,246,.18); font-weight: 700; }
+  .rg-search-btn { padding: 10px 14px; border-radius: 10px; border: none; background: linear-gradient(135deg, #4ba8ff, #2f9f96); color: #fff; font-weight: 700; font-size: 13.5px; cursor: pointer; font-family: var(--font-body); box-shadow: 0 6px 14px rgba(56,104,246,.16); transition: all .2s ease; }
+  .rg-search-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(56,104,246,.24); }
+  .rg-search-btn:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(56,104,246,.16); }
+  .rg-menu-nav { display: flex; gap: 10px; padding: 18px 28px 0; flex-wrap: wrap; }
+  .rg-menu-btn { padding: 10px 14px; border-radius: 999px; border: 1px solid #dfe8f0; background: #ffffff; color: var(--muted); font-weight: 700; font-family: var(--font-body); box-shadow: 0 6px 14px rgba(20,33,61,.04); }
+  .rg-menu-btn.active { background: linear-gradient(135deg, #3868f6, #2f9f96); color: #ffffff; border-color: transparent; }
+  .rg-menu-panel { display: none; }
+  .rg-menu-panel.active { display: block; }
+  .rg-search-card { margin: 16px 28px 0; padding: 16px 18px; border-radius: 18px; background: linear-gradient(135deg, #f8fbff, #f3f7fd); border: 1px solid #e4ebf2; box-shadow: 0 8px 20px rgba(20,33,61,.04); }
+  .rg-search-card h3 { margin: 0 0 6px; font-family: var(--font-display); color: var(--ink); font-size: 18px; }
+  .rg-search-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+  .rg-tabs { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px 28px 14px; border-bottom: 1px solid var(--hairline); background: rgba(255,255,255,.92); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 20; }
+  .rg-tab { padding: 9px 13px; }
+  .rg-tab:hover { transform: translateY(-1px); border-color: rgba(47,159,150,.3); color: var(--ink); }
+  .rg-tab.active { color: #ffffff; background: linear-gradient(135deg, #3868f6, #2f9f96); border-color: transparent; box-shadow: 0 8px 16px rgba(56,104,246,.16); }
+  .rg-panel { display: none; padding: 24px 28px 28px; }
+  .rg-panel.active { display: block; animation: fadeIn .25s ease; }
   .rg-loading, .rg-empty { padding: 34px 18px; text-align: center; color: var(--muted); font-size: 13px; }
   .rg-grid { display: grid; gap: 14px; }
   .rg-kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .rg-cardbox { background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015)); border: 1px solid var(--hairline); border-radius: 14px; padding: 15px; min-width: 0; }
+  .rg-cardbox { background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%); border: 1px solid #e5ebf2; border-radius: 18px; padding: 16px; min-width: 0; box-shadow: 0 10px 24px rgba(20,33,61,.06); transition: transform .2s ease, border-color .2s ease; }
+  .rg-cardbox:hover { transform: translateY(-1px); border-color: rgba(47,159,150,.26); }
   .rg-kpi-label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin-bottom: 7px; }
-  .rg-kpi-value { font-family: var(--font-display); font-size: 26px; line-height: 1.05; color: var(--paper); }
+  .rg-kpi-value { font-family: var(--font-display); font-size: 26px; line-height: 1.05; color: var(--ink); font-weight: 800; }
   .rg-kpi-note { font-size: 12px; color: var(--muted); margin-top: 7px; }
   .rg-eureka { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 14px; }
   .rg-eureka .rg-cardbox { border-left: 3px solid var(--brass); }
@@ -62,48 +101,49 @@
   .rg-eureka .negative { border-left-color: var(--rust); }
   .rg-eureka .warning { border-left-color: var(--brass); }
   .rg-eureka-title { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
-  .rg-eureka-value { font-family: var(--font-display); font-size: 21px; margin: 8px 0 6px; }
+  .rg-eureka-value { font-family: var(--font-display); font-size: 21px; margin: 8px 0 6px; color: var(--ink); font-weight: 700; }
   .rg-eureka-note { font-size: 12.5px; line-height: 1.45; color: var(--muted); }
   .rg-split { display: grid; grid-template-columns: 1.2fr .8fr; gap: 14px; margin-top: 14px; }
-  .rg-section-title { font-family: var(--font-display); font-size: 19px; margin: 0 0 6px; }
-  .rg-section-sub { color: var(--muted); margin: 0 0 14px; font-size: 12.5px; }
+  .rg-section-title { font-family: var(--font-display); font-size: 19px; margin: 0 0 6px; color: var(--ink); font-weight: 700; }
+  .rg-section-sub { color: var(--muted); margin: 0 0 14px; font-size: 12.5px; line-height: 1.55; }
   .rg-bars { display: grid; gap: 10px; }
   .rg-bar-row { display: grid; grid-template-columns: minmax(110px, 1fr) minmax(100px, 2fr) 68px; gap: 10px; align-items: center; font-size: 12px; color: var(--muted); }
-  .rg-bar-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-  .rg-bar-track { height: 9px; border-radius: 999px; background: var(--panel-3); overflow: hidden; }
-  .rg-bar-fill { height: 100%; width: 0; border-radius: 999px; background: var(--teal); }
-  .rg-bar-fill.risk { background: var(--rust); }
-  .rg-chart { width: 100%; min-height: 240px; background: rgba(0,0,0,.08); border: 1px solid var(--hairline); border-radius: 12px; padding: 10px; overflow: hidden; }
+  .rg-bar-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ink); }
+  .rg-bar-track { height: 9px; border-radius: 999px; background: #e9f0f7; overflow: hidden; }
+  .rg-bar-fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--teal), #66cabd); }
+  .rg-bar-fill.risk { background: linear-gradient(90deg, var(--rust), #ff978f); }
+  .rg-chart { width: 100%; min-height: 240px; background: linear-gradient(180deg, #f8fbff, #f2f7fb); border: 1px solid #e4ebf2; border-radius: 14px; padding: 10px; overflow: hidden; }
   .rg-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .rg-table th { text-align: left; color: var(--muted); font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .04em; border-bottom: 1px solid var(--hairline); padding: 8px 6px; }
-  .rg-table td { border-bottom: 1px solid rgba(51,65,84,.65); padding: 9px 6px; vertical-align: top; }
+  .rg-table th { text-align: left; color: var(--muted); font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .04em; border-bottom: 1px solid #e7edf3; padding: 8px 6px; }
+  .rg-table td { border-bottom: 1px solid #eef3f8; padding: 9px 6px; vertical-align: top; color: var(--ink); }
   .rg-table td.num, .rg-table th.num { text-align: right; font-family: var(--font-mono); }
   .rg-map-layout { display: grid; grid-template-columns: 1fr 320px; gap: 14px; min-height: 640px; }
-  .rg-map-card { position: relative; min-height: 640px; border: 1px solid var(--hairline); border-radius: 14px; overflow: hidden; background: var(--panel-2); }
+  .rg-map-card { position: relative; min-height: 640px; border: 1px solid #e4ebf2; border-radius: 18px; overflow: hidden; background: linear-gradient(135deg, #f7fbff, #ffffff); box-shadow: 0 8px 20px rgba(20,33,61,.05); }
   #rg-heatmap { height: 100%; min-height: 640px; }
   .rg-map-tools { position: absolute; z-index: 450; left: 14px; top: 14px; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 28px); }
-  .rg-map-tools select { background: rgba(27,36,48,.92); color: var(--paper); border: 1px solid var(--hairline); border-radius: 9px; padding: 8px; font-size: 12px; }
+  .rg-map-tools select { background: rgba(255,255,255,.96); color: var(--ink); border: 1px solid #dfe7ef; border-radius: 10px; padding: 8px; font-size: 12px; box-shadow: 0 6px 16px rgba(20,33,61,.06); }
   .rg-list-wrap { display: grid; grid-template-columns: 390px 1fr; gap: 14px; }
-  .rg-list { overflow-y: auto; max-height: 640px; border: 1px solid var(--hairline); border-radius: 14px; }
-  .rg-card { display: block; width: 100%; text-align: left; padding: 14px 16px; cursor: pointer; border: none; border-bottom: 1px solid var(--hairline); background: transparent; color: var(--paper); border-left: 3px solid transparent; }
-  .rg-card:hover, .rg-card.selected { background: var(--panel); }
+  .rg-list { overflow-y: auto; max-height: 640px; border: 1px solid #e4ebf2; border-radius: 16px; background: #ffffff; box-shadow: 0 10px 24px rgba(20,33,61,.05); }
+  .rg-card { display: block; width: 100%; text-align: left; padding: 14px 16px; cursor: pointer; border: none; border-bottom: 1px solid #eef3f8; background: transparent; color: var(--ink); border-left: 3px solid transparent; }
+  .rg-card:hover, .rg-card.selected { background: #f7fbff; }
   .rg-card.selected { border-left-color: var(--brass); }
-  .rg-card-name { font-size: 14px; font-weight: 650; margin-bottom: 5px; }
+  .rg-card-name { font-size: 14px; font-weight: 700; margin-bottom: 5px; color: var(--ink); }
   .rg-card-meta { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-bottom: 7px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .rg-card-sic { font-size: 12px; color: var(--muted); line-height: 1.35; }
   .rg-pill { display: inline-block; font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em; padding: 2px 7px; border-radius: 999px; border: 1px solid; }
-  .rg-loadmore { display: block; width: 100%; padding: 13px; background: var(--panel-2); border: none; border-top: 1px solid var(--hairline); color: var(--teal); }
-  .rg-detail { background: var(--paper); color: #1B2430; border-radius: 14px; padding: 18px; min-height: 220px; border: 1px solid rgba(0,0,0,.08); }
-  .rg-detail h3 { font-family: var(--font-display); font-size: 22px; margin: 0 0 12px; }
-  .rg-detail-row { font-size: 12.5px; color: #4B5566; margin-bottom: 5px; }
-  .rg-detail-row b { color: #1B2430; font-family: var(--font-mono); font-weight: 600; }
+  .rg-loadmore { display: block; width: 100%; padding: 13px; background: #f7fbff; border: none; border-top: 1px solid #eef3f8; color: var(--teal); font-weight: 700; }
+  .rg-detail { background: linear-gradient(135deg, #fdf9f0, #f4f8fb); color: #1f2d3d; border-radius: 18px; padding: 18px; min-height: 220px; border: 1px solid #e7ebf0; box-shadow: 0 8px 20px rgba(20,33,61,.05); }
+  .rg-detail h3 { font-family: var(--font-display); font-size: 22px; margin: 0 0 12px; color: var(--ink); font-weight: 800; }
+  .rg-detail-row { font-size: 12.5px; color: #516273; margin-bottom: 5px; }
+  .rg-detail-row b { color: #1f2d3d; font-family: var(--font-mono); font-weight: 600; }
   .rg-footnote { color: var(--muted); font-size: 11.5px; line-height: 1.45; margin-top: 12px; }
   .rg-count { font-family: var(--font-mono); color: var(--muted); font-size: 12px; margin: 0 0 12px; }
-  .leaflet-popup-content { color: #1B2430; }
+  .leaflet-popup-content { color: #1f2d3d; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
   @media (max-width: 980px) {
     .rg-controls { grid-template-columns: 1fr; }
     .rg-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .rg-eureka, .rg-split, .rg-map-layout, .rg-list-wrap { grid-template-columns: 1fr; }
+    .rg-eureka, .rg-split, .rg-map-layout, .rg-list-wrap, .rg-quick-guide { grid-template-columns: 1fr; }
     .rg-map-card, #rg-heatmap { min-height: 460px; }
   }
   @media (max-width: 600px) {
@@ -184,59 +224,93 @@
   }).join("");
 
   root.innerHTML = `
-    <div class="rg-header">
-      <p class="rg-eyebrow">UK Market Intelligence — Companies House</p>
-      <h2 class="rg-title">Market Research Radar</h2>
-      <p class="rg-subtitle">Search a sector, town or postcode and get full-population insight: density heatmap, formation pulse, opportunity pockets, stress signals and the companies behind the pattern.</p>
-    </div>
-    <div class="rg-banner">
-      <span class="rg-stamp-badge" id="rg-source-badge">DEMO DATA</span>
-      <span><b>Insight mode:</b> the company list is paginated for speed, but the new radar, heatmap and trend tabs calculate over the full matching search universe.</span>
-    </div>
-    <div class="rg-controls">
-      <input type="text" id="rg-q" placeholder='Sector or keyword: "pilates", "software", "bakery"…' />
-      <input type="text" id="rg-place" placeholder="Town, postcode, postcode district" />
-      <a href="#" class="rg-export" id="rg-export">Export CSV <span style="opacity:.7">(first 50k)</span></a>
-      <div class="rg-status-group" id="rg-status-group">${categoryButtons}</div>
-    </div>
-    <div class="rg-tabs" role="tablist">
-      <button class="rg-tab active" data-tab="radar">Market Radar</button>
-      <button class="rg-tab" data-tab="heatmap">Heat Map</button>
-      <button class="rg-tab" data-tab="trends">Time Trend</button>
-      <button class="rg-tab" data-tab="opportunity">Opportunity Finder</button>
-      <button class="rg-tab" data-tab="companies">Companies</button>
-    </div>
-    <section class="rg-panel active" id="rg-panel-radar"><div class="rg-loading">Building market radar…</div></section>
-    <section class="rg-panel" id="rg-panel-heatmap">
-      <div class="rg-map-layout">
-        <div class="rg-map-card">
-          <div class="rg-map-tools">
-            <select id="rg-heat-mode"><option value="count">Density</option><option value="recent_count">Recent formation</option><option value="risk_count">Stress / risk</option></select>
+    <div class="rg-shell">
+      <div class="rg-header">
+        <div class="rg-header-main">
+          <div>
+            <p class="rg-eyebrow">UK Market Intelligence • Companies House</p>
+            <h2 class="rg-title">Market Research Radar</h2>
+
           </div>
-          <div id="rg-heatmap"></div>
+
         </div>
-        <div id="rg-heat-summary" class="rg-cardbox"><div class="rg-loading">Loading heatmap…</div></div>
+
       </div>
-    </section>
-    <section class="rg-panel" id="rg-panel-trends"><div class="rg-loading">Building trend view…</div></section>
-    <section class="rg-panel" id="rg-panel-opportunity"><div class="rg-loading">Scoring opportunities…</div></section>
-    <section class="rg-panel" id="rg-panel-companies">
-      <p class="rg-count" id="rg-count"></p>
-      <div class="rg-list-wrap">
-        <div class="rg-list" id="rg-list"><div class="rg-loading">Checking data source…</div></div>
-        <div class="rg-detail" id="rg-detail"><h3>Select a company</h3><p class="rg-detail-row">Use this tab to inspect the rows behind the market signal.</p></div>
+
+      <div class="rg-menu-nav" role="tablist" aria-label="Main workflow">
+        <button class="rg-menu-btn active" data-menu="search">Search</button>
+        <button class="rg-menu-btn" data-menu="explore">Explore</button>
+        <button class="rg-menu-btn" data-menu="act">Act</button>
       </div>
-    </section>
+      <section class="rg-menu-panel active" id="rg-menu-search">
+        <div class="rg-search-card">
+          <h3>Search the market</h3>
+          <p>Use keywords, town names or postcode areas to narrow the market. The filters here control what appears in the Explore and Act views.</p>
+        </div>
+        <div class="rg-controls">
+          <input type="text" id="rg-q" placeholder='Sector or keyword: "pilates", "software", "bakery"…' />
+          <div class="rg-status-dropdown" id="rg-status-dropdown">
+            <button type="button" class="rg-status-toggle" id="rg-status-toggle" aria-expanded="false">All status ▾</button>
+            <div class="rg-status-menu" id="rg-status-menu"></div>
+          </div>
+          <button id="rg-search-btn" class="rg-search-btn">Search</button>
+          <a href="#" class="rg-export" id="rg-export">Export CSV <span style="opacity:.7">(first 50k)</span></a>
+        </div>
+      </section>
+      <section class="rg-menu-panel" id="rg-menu-explore">
+        <div class="rg-tabs" role="tablist">
+          <button class="rg-tab active" data-tab="radar">Overview</button>
+          <button class="rg-tab" data-tab="heatmap">Map</button>
+          <button class="rg-tab" data-tab="trends">Trends</button>
+          <button class="rg-tab" data-tab="opportunity">Opportunities</button>
+        </div>
+        <div class="rg-explore-filters">
+          <div class="rg-place-wrapper">
+            <input type="text" id="rg-explore-place" placeholder="Filter by town, postcode or postcode district" />
+            <div class="rg-place-autocomplete" id="rg-explore-place-autocomplete"></div>
+          </div>
+        </div>
+        <section class="rg-panel active" id="rg-panel-radar"><div class="rg-loading">Building market radar…</div></section>
+        <section class="rg-panel" id="rg-panel-heatmap">
+          <div class="rg-map-layout">
+            <div class="rg-map-card">
+              <div class="rg-map-tools">
+                <select id="rg-heat-mode"><option value="count">Density</option><option value="recent_count">Recent formation</option><option value="risk_count">Stress / risk</option></select>
+              </div>
+              <div id="rg-heatmap"></div>
+            </div>
+            <div id="rg-heat-summary" class="rg-cardbox"><div class="rg-loading">Loading heatmap…</div></div>
+          </div>
+        </section>
+        <section class="rg-panel" id="rg-panel-trends"><div class="rg-loading">Building trend view…</div></section>
+        <section class="rg-panel" id="rg-panel-opportunity"><div class="rg-loading">Scoring opportunities…</div></section>
+      </section>
+      <section class="rg-menu-panel" id="rg-menu-act">
+        <div class="rg-search-card">
+          <h3>Act on the results</h3>
+          <p>Review the companies behind the signal and use the export action when you want to share or investigate the list further.</p>
+        </div>
+        <div class="rg-panel active" id="rg-panel-companies" style="padding-top: 12px;">
+          <p class="rg-count" id="rg-count"></p>
+          <div class="rg-list-wrap">
+            <div class="rg-list" id="rg-list"><div class="rg-loading">Checking data source…</div></div>
+            <div class="rg-detail" id="rg-detail"><h3>Select a company</h3><p class="rg-detail-row">Use this tab to inspect the rows behind the market signal.</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
   `;
 
   const els = {
-    q: root.querySelector("#rg-q"), place: root.querySelector("#rg-place"), export: root.querySelector("#rg-export"),
-    statusGroup: root.querySelector("#rg-status-group"), badge: root.querySelector("#rg-source-badge"), count: root.querySelector("#rg-count"),
+    q: root.querySelector("#rg-q"), export: root.querySelector("#rg-export"),
+    explorePlace: root.querySelector("#rg-explore-place"), exploreAutocomplete: root.querySelector("#rg-explore-place-autocomplete"),
+    statusDropdown: root.querySelector("#rg-status-dropdown"), statusToggle: root.querySelector("#rg-status-toggle"), statusMenu: root.querySelector("#rg-status-menu"), count: root.querySelector("#rg-count"),
     list: root.querySelector("#rg-list"), detail: root.querySelector("#rg-detail"), heatSummary: root.querySelector("#rg-heat-summary"), heatMode: root.querySelector("#rg-heat-mode"),
-    radar: root.querySelector("#rg-panel-radar"), trends: root.querySelector("#rg-panel-trends"), opportunity: root.querySelector("#rg-panel-opportunity"), heatPanel: root.querySelector("#rg-panel-heatmap")
+    radar: root.querySelector("#rg-panel-radar"), trends: root.querySelector("#rg-panel-trends"), opportunity: root.querySelector("#rg-panel-opportunity"), heatPanel: root.querySelector("#rg-panel-heatmap"),
+    mainMenu: root.querySelectorAll(".rg-menu-btn"), menuPanels: root.querySelectorAll(".rg-menu-panel"), searchBtn: root.querySelector("#rg-search-btn")
   };
 
-  let isLive = false, categoryFilter = "", selectedIndex = null;
+  let isLive = false, categoryFilter = [], selectedIndex = null;
   const PAGE_SIZE = 200;
   const state = { items: [], total: 0, offset: 0, insights: null };
   let heatMap = null, heatLayers = [];
@@ -244,9 +318,12 @@
   function fmt(n) { return Number(n || 0).toLocaleString(); }
   function pct(n, d) { return d ? ((n / d) * 100).toFixed(1) : "0.0"; }
   function escapeHtml(str) { return String(str ?? "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-  function params() { return { q: els.q.value.trim(), place: els.place.value.trim(), category: categoryFilter }; }
+  function params() {
+    const cat = Array.isArray(categoryFilter) ? (categoryFilter.length ? categoryFilter.join('|') : '') : (categoryFilter || '');
+    return { q: els.q.value.trim(), place: els.explorePlace?.value?.trim() || '', category: cat };
+  }
   function paramsToQuery(extra = {}) { const p = new URLSearchParams({ ...params(), ...extra }); return p.toString(); }
-  function setLiveBadge() { els.badge.textContent = isLive ? "LIVE API" : "DEMO DATA"; els.badge.classList.toggle("live", isLive); }
+  function setLiveBadge() { /* badge removed from UI; keep isLive state for logic only */ }
 
   async function checkLiveSource() {
     try {
@@ -277,7 +354,7 @@
     return DEMO_DATA.filter((item) => {
       const matchesQ = !q || item.company_name.toLowerCase().includes(q) || (item.sic_text || "").toLowerCase().includes(q);
       const matchesPlace = !place || (item.town || "").toLowerCase().includes(place) || (item.postcode || "").toLowerCase().includes(place);
-      const matchesCategory = !categoryFilter || item.status_category === categoryFilter;
+      const matchesCategory = !categoryFilter || (Array.isArray(categoryFilter) ? categoryFilter.length === 0 || categoryFilter.includes(item.status_category) : item.status_category === categoryFilter);
       return matchesQ && matchesPlace && matchesCategory;
     });
   }
@@ -522,14 +599,109 @@
 
   function debounce(fn, ms) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); }; }
   const debouncedSearch = debounce(() => doSearch(true), 220);
-  els.q.addEventListener('input', debouncedSearch);
-  els.place.addEventListener('input', debouncedSearch);
-  els.statusGroup.addEventListener('click', (e) => {
-    const btn = e.target.closest('.rg-status-btn'); if (!btn) return;
-    categoryFilter = btn.dataset.category;
-    els.statusGroup.querySelectorAll('.rg-status-btn').forEach(b => b.classList.toggle('active', b === btn));
-    doSearch(true);
+  // Populate the status dropdown with checkboxes and wire the search button.
+  if (els.statusMenu && els.statusToggle) {
+    const cats = [''].concat(Object.keys(STATUS_CATEGORIES));
+    els.statusMenu.innerHTML = cats.map(cat => {
+      const key = cat === '' ? '' : cat;
+      const label = cat === '' ? 'All status' : metaFor(cat).chip;
+      const checked = cat === '' ? 'checked' : '';
+      return `<label><input type="checkbox" data-cat="${key}" ${checked} /> ${label}</label>`;
+    }).join('');
+    const checkboxes = Array.from(els.statusMenu.querySelectorAll('input[type=checkbox]'));
+    function updateFromCheckboxes() {
+      const allBox = checkboxes.find(cb => cb.dataset.cat === '');
+      const others = checkboxes.filter(cb => cb.dataset.cat !== '');
+      if (allBox && allBox.checked) {
+        others.forEach(cb => cb.checked = false);
+        categoryFilter = [];
+        els.statusToggle.textContent = 'All status ▾';
+      } else {
+        const selected = others.filter(cb => cb.checked).map(cb => cb.dataset.cat);
+        categoryFilter = selected;
+        els.statusToggle.textContent = selected.length ? selected.map(s => metaFor(s).chip).join(', ') + ' ▾' : 'All status ▾';
+      }
+    }
+    checkboxes.forEach(cb => cb.addEventListener('change', (e) => {
+      if (cb.dataset.cat === '' && cb.checked) {
+        // uncheck others
+        checkboxes.forEach(c => { if (c.dataset.cat !== '') c.checked = false; });
+      }
+      if (cb.dataset.cat !== '' && cb.checked) {
+        const allCb = checkboxes.find(c => c.dataset.cat === ''); if (allCb) allCb.checked = false;
+      }
+      updateFromCheckboxes();
+    }));
+    // Initialize toggle text based on initial checkbox state
+    updateFromCheckboxes();
+    els.statusToggle.addEventListener('click', (e) => {
+      const isHidden = els.statusMenu.hasAttribute('hidden');
+      if (isHidden) { els.statusMenu.removeAttribute('hidden'); } else { els.statusMenu.setAttribute('hidden', ''); }
+      els.statusToggle.setAttribute('aria-expanded', String(!isHidden));
+    });
+    document.addEventListener('click', (e) => {
+      if (!root.querySelector('#rg-status-dropdown').contains(e.target)) {
+        els.statusMenu.setAttribute('hidden', '');
+        els.statusToggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+  if (els.searchBtn) els.searchBtn.addEventListener('click', async () => {
+    // Run the search
+    await doSearch(true);
+    // Switch to Explore panel to show results
+    setTimeout(() => {
+      Array.from(els.mainMenu).forEach(b => b.classList.remove('active'));
+      Array.from(els.menuPanels).forEach(p => p.classList.remove('active'));
+      const exploreBtn = Array.from(els.mainMenu).find(b => b.dataset.menu === 'explore');
+      const explorePanel = root.querySelector('#rg-menu-explore');
+      if (exploreBtn) exploreBtn.classList.add('active');
+      if (explorePanel) explorePanel.classList.add('active');
+      // Trigger initial render of explore content
+      renderKpis(); renderEureka(); renderBars(); renderTrendChart(); renderRadar();
+    }, 100);
   });
+  // Set up town autocomplete
+  const uniqueTowns = [...new Set(DEMO_DATA.map(d => d.town).sort())];
+  // Set up Explore page town filter with autocomplete
+  if (els.explorePlace && els.exploreAutocomplete) {
+    function showPlaceSuggestions(value) {
+      const filtered = value.trim().length > 0
+        ? uniqueTowns.filter(town => town.toLowerCase().includes(value.toLowerCase()))
+        : [];
+      if (filtered.length > 0) {
+        els.exploreAutocomplete.innerHTML = filtered.map(town =>
+          `<div class="rg-place-option">${escapeHtml(town)}</div>`
+        ).join('');
+        els.exploreAutocomplete.classList.add('active');
+      } else {
+        els.exploreAutocomplete.classList.remove('active');
+      }
+    }
+    els.explorePlace.addEventListener('input', (e) => {
+      showPlaceSuggestions(e.target.value);
+      // Re-render with new filter
+      renderList();
+      renderKpis(); renderEureka(); renderBars(); renderTrendChart(); renderRadar();
+    });
+    els.explorePlace.addEventListener('focus', (e) => {
+      showPlaceSuggestions(e.target.value);
+    });
+    els.exploreAutocomplete.addEventListener('click', (e) => {
+      if (e.target.classList.contains('rg-place-option')) {
+        els.explorePlace.value = e.target.textContent;
+        els.exploreAutocomplete.classList.remove('active');
+        // Re-render with selected town
+        renderList();
+        renderKpis(); renderEureka(); renderBars(); renderTrendChart(); renderRadar();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!els.explorePlace.contains(e.target) && !els.exploreAutocomplete.contains(e.target)) {
+        els.exploreAutocomplete.classList.remove('active');
+      }
+    });
+  }
   els.heatMode.addEventListener('change', renderHeatMap);
   root.querySelectorAll('.rg-tab').forEach(tab => tab.addEventListener('click', () => {
     root.querySelectorAll('.rg-tab').forEach(t => t.classList.toggle('active', t === tab));
@@ -538,6 +710,17 @@
     if (tab.dataset.tab === 'heatmap') setTimeout(() => { initHeatMap(); heatMap.invalidateSize(); renderHeatMap(); }, 60);
   }));
   els.export.addEventListener('click', (e) => { if (!isLive) { e.preventDefault(); alert('CSV export is available when the Flask server is running with live data.'); } });
+  els.mainMenu.forEach(btn => btn.addEventListener('click', () => {
+    els.mainMenu.forEach(b => b.classList.toggle('active', b === btn));
+    els.menuPanels.forEach(panel => panel.classList.toggle('active', panel.id === `rg-menu-${btn.dataset.menu}`));
+    if (btn.dataset.menu === 'explore') {
+      setTimeout(() => {
+        initHeatMap();
+        heatMap.invalidateSize();
+        renderHeatMap();
+      }, 60);
+    }
+  }));
 
   checkLiveSource().then(() => doSearch(true));
 })();
