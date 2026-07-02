@@ -1,116 +1,242 @@
 <div id="register-app"></div>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js"></script>
 
 <style>
   #register-app, #register-app * { box-sizing: border-box; }
   #register-app {
-    --ink: #111821;
-    --panel: #1B2430;
-    --panel-2: #222D3B;
-    --panel-3: #2A3647;
-    --hairline: #334154;
-    --paper: #F0EADC;
-    --muted: #9AA5B5;
-    --brass: #C99A4B;
-    --teal: #5FA8A0;
-    --rust: #C1574A;
-    --red: #8B2E2E;
-    --green: #7ABF8E;
-    --font-display: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
-    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --ink: #14213d;
+    --panel: #f8fafc;
+    --panel-2: #ffffff;
+    --panel-3: #f3f7fb;
+    --hairline: #dfe7ef;
+    --paper: #16324f;
+    --muted: #64748b;
+    --brass: #d28d3b;
+    --teal: #2f9f96;
+    --rust: #e46b63;
+    --red: #c94e56;
+    --green: #5aa96a;
+    --shadow: 0 18px 45px rgba(20, 33, 61, 0.12);
+    --font-display: "Manrope", "Segoe UI", sans-serif;
+    --font-body: "Inter", "Segoe UI", sans-serif;
     --font-mono: "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    background: radial-gradient(circle at top left, rgba(95,168,160,.18), transparent 28rem), var(--ink);
+    background: linear-gradient(135deg, #f8f3ea 0%, #f5fbff 48%, #eef4ff 100%);
     color: var(--paper);
     font-family: var(--font-body);
-    border-radius: 16px;
-    overflow: hidden;
-    border: 1px solid var(--hairline);
+    border-radius: 24px;
+    overflow: visible;
+    border: 1px solid rgba(20, 33, 61, 0.08);
+    box-shadow: var(--shadow);
   }
-  .rg-header { padding: 28px 28px 18px; border-bottom: 1px solid var(--hairline); }
-  .rg-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; color: var(--brass); text-transform: uppercase; margin: 0 0 8px; }
-  .rg-title { font-family: var(--font-display); font-size: clamp(28px, 4vw, 44px); line-height: 1.05; margin: 0 0 8px; color: var(--paper); }
-  .rg-subtitle { font-size: 14px; color: var(--muted); margin: 0; max-width: 850px; }
-  .rg-banner { margin: 16px 28px 0; padding: 11px 14px; border: 1px dashed var(--brass); border-radius: 10px; font-size: 12.5px; color: var(--brass); display: flex; gap: 10px; align-items: flex-start; background: rgba(201,154,75,.06); }
-  .rg-banner b { color: var(--paper); }
-  .rg-stamp-badge { flex: none; font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; border: 1px solid var(--brass); color: var(--brass); border-radius: 999px; padding: 2px 8px; transform: rotate(-3deg); white-space: nowrap; }
-  .rg-stamp-badge.live { border-color: var(--teal); color: var(--teal); }
-  .rg-controls { display: grid; grid-template-columns: minmax(220px, 1.4fr) minmax(180px, .8fr) auto; gap: 10px; padding: 18px 28px 10px; align-items: center; }
-  .rg-controls input, .rg-controls select { background: var(--panel-2); border: 1px solid var(--hairline); color: var(--paper); font-family: var(--font-body); font-size: 13.5px; padding: 10px 12px; border-radius: 9px; min-height: 40px; }
-  .rg-controls input::placeholder { color: var(--muted); }
-  .rg-controls input:focus, .rg-controls select:focus, .rg-status-btn:focus-visible, .rg-tab:focus-visible, .rg-card:focus-visible, .rg-loadmore:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
-  .rg-status-group { grid-column: 1 / -1; display: flex; gap: 7px; flex-wrap: wrap; }
-  .rg-status-btn, .rg-tab, .rg-loadmore, .rg-mini-btn { font-family: var(--font-mono); font-size: 11.5px; border-radius: 9px; border: 1px solid var(--hairline); background: transparent; color: var(--muted); cursor: pointer; }
-  .rg-status-btn { padding: 8px 11px; }
-  .rg-status-btn.active { background: var(--panel-2); color: var(--paper); border-color: var(--cat-color, var(--brass)); }
-  .rg-export { color: var(--teal); text-decoration: none; font-family: var(--font-mono); font-size: 11.5px; border: 1px solid var(--hairline); border-radius: 9px; padding: 10px 12px; text-align: center; }
-  .rg-tabs { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 28px 16px; border-bottom: 1px solid var(--hairline); }
-  .rg-tab { padding: 9px 12px; }
-  .rg-tab.active { color: var(--paper); background: var(--panel-2); border-color: var(--teal); }
-  .rg-panel { display: none; padding: 22px 28px 28px; }
-  .rg-panel.active { display: block; }
+  .rg-shell { padding: 0; }
+  .rg-header { padding: 30px 28px 22px; border-bottom: 1px solid var(--hairline); background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%); }
+  .rg-header-main { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .rg-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; color: var(--teal); text-transform: uppercase; margin: 0 0 8px; font-weight: 700; }
+  .rg-title { font-family: var(--font-display); font-size: clamp(30px, 4vw, 46px); line-height: 1.05; margin: 0 0 8px; color: var(--ink); font-weight: 800; }
+  .rg-subtitle { font-size: 14.5px; color: var(--muted); margin: 0; max-width: 860px; line-height: 1.7; }
+  .rg-hero-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  .rg-pill-large { display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; border: 1px solid #dfe9f2; background: #ffffff; font-family: var(--font-mono); font-size: 11px; color: var(--ink); box-shadow: 0 6px 16px rgba(20,33,61,.06); }
+  .rg-pill-large--primary { border-color: rgba(47,159,150,.28); color: var(--teal); }
+  .rg-pill-large--accent { border-color: rgba(210,141,59,.24); color: var(--brass); }
+  .rg-quick-guide { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+  .rg-guide-card { background: linear-gradient(135deg, #ffffff, #f7fbff); border: 1px solid #e3ebf3; border-radius: 16px; padding: 12px 14px; display: flex; flex-direction: column; gap: 5px; box-shadow: 0 10px 20px rgba(20,33,61,.04); }
+  .rg-guide-card strong { color: var(--ink); font-size: 13px; font-family: var(--font-display); }
+  .rg-guide-card span { color: var(--muted); font-size: 12.5px; line-height: 1.5; }
+  .rg-banner { margin: 16px 28px 0; padding: 12px 14px; border: 1px solid rgba(47,159,150,.22); border-radius: 16px; font-size: 12.5px; color: var(--ink); display: flex; gap: 10px; align-items: flex-start; background: linear-gradient(90deg, rgba(47,159,150,.08), rgba(210,141,59,.08)); box-shadow: inset 0 1px 0 rgba(255,255,255,.4); }
+  .rg-banner b { color: var(--ink); }
+  .rg-stamp-badge { flex: none; font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; border: 1px solid var(--teal); color: var(--teal); border-radius: 999px; padding: 2px 8px; transform: rotate(-3deg); white-space: nowrap; background: rgba(255,255,255,.82); }
+  .rg-stamp-badge.live { border-color: var(--brass); color: var(--brass); }
+  .rg-controls { display: grid; grid-template-columns: minmax(150px, 230px) auto minmax(0, 1fr); gap: 10px; padding: 18px 28px 10px; align-items: start; }
+  .rg-place-wrapper { position: relative; }
+  .rg-place-autocomplete { position: absolute; top: calc(100% + 10px); left: 0; right: 0; background: #fff; border: 1px solid rgba(47,159,150,.22); box-shadow: 0 18px 40px rgba(20,33,61,.14); border-radius: 16px; max-height: 240px; overflow-y: auto; z-index: 1100; display: none; }
+  .rg-place-autocomplete.active { display: block; }
+  .rg-place-option { padding: 11px 14px; cursor: pointer; font-size: 13px; color: var(--ink); border-bottom: 1px solid #f0f3f8; font-weight: 700; }
+  .rg-place-option:hover, .rg-place-option.selected { background: #edf8f7; color: #13645f; }
+  .rg-explore-filter { width: min(760px, 100%); flex: 0 1 760px; }
+  .rg-explore-filter-shell { display: grid; grid-template-columns: auto minmax(180px, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px 10px 16px; border-radius: 18px; border: 1px solid rgba(47,159,150,.32); background: linear-gradient(135deg, #ffffff 0%, #effbf9 48%, #fff7eb 100%); box-shadow: 0 16px 34px rgba(20,33,61,.12), inset 0 1px 0 rgba(255,255,255,.78); }
+  .rg-filter-label { display: flex; flex-direction: column; gap: 2px; min-width: 135px; }
+  .rg-filter-label span { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); font-weight: 800; }
+  .rg-filter-label strong { font-family: var(--font-display); font-size: 15px; color: var(--ink); line-height: 1.1; }
+  .rg-explore-filter input { width: 100%; min-height: 48px; padding: 11px 18px; border-radius: 14px; border: 1px solid rgba(47,159,150,.28); background: #ffffff; color: var(--ink); font-family: var(--font-body); font-size: 14px; font-weight: 800; box-shadow: 0 8px 18px rgba(20,33,61,.08); }
+  .rg-explore-filter input::placeholder { color: #5f7387; font-weight: 700; }
+  .rg-clear-place { min-height: 42px; padding: 0 14px; border-radius: 999px; border: 1px solid rgba(201,78,86,.22); background: #ffffff; color: var(--red); font-family: var(--font-body); font-size: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 8px 18px rgba(20,33,61,.07); }
+  .rg-clear-place[hidden] { display: none; }
+  .rg-clear-place:hover { background: #fff5f5; border-color: rgba(201,78,86,.38); }
+  .rg-controls input, .rg-controls select { background: #ffffff; border: 1px solid var(--hairline); color: var(--ink); font-family: var(--font-body); font-size: 13.5px; padding: 10px 12px; border-radius: 12px; min-height: 42px; box-shadow: 0 4px 10px rgba(20,33,61,.04); }
+  .rg-keyword-input { width: 100%; max-width: 230px; }
+  .rg-controls input::placeholder { color: #94a3b8; }
+  .rg-controls input:focus, .rg-controls select:focus, .rg-explore-filter input:focus, .rg-status-btn:focus-visible, .rg-tab:focus-visible, .rg-card:focus-visible, .rg-loadmore:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+  .rg-status-panel { grid-column: 1 / -1; display: grid; gap: 10px; margin-top: 4px; padding: 13px; border: 1px solid rgba(47,159,150,.18); border-radius: 18px; background: linear-gradient(135deg, #ffffff, #f7fbff); box-shadow: 0 10px 24px rgba(20,33,61,.05); }
+  .rg-status-panel-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .rg-status-panel-head strong { color: var(--ink); font-family: var(--font-display); font-size: 14px; }
+  .rg-status-panel-head span { color: var(--muted); font-size: 12px; }
+  .rg-status-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 9px; }
+  .rg-status-btn, .rg-tab, .rg-loadmore, .rg-mini-btn { font-family: var(--font-body); font-size: 11.5px; border-radius: 999px; border: 1px solid var(--hairline); background: #ffffff; color: var(--muted); cursor: pointer; transition: all .2s ease; font-weight: 600; }
+  .rg-status-btn { position: relative; min-height: 70px; padding: 12px 12px 12px 14px; border-radius: 14px; text-align: left; display: grid; align-content: center; gap: 4px; overflow: hidden; color: var(--ink); }
+  .rg-status-btn::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--cat-color, var(--teal)); opacity: .75; }
+  .rg-status-btn::after { content: ""; display: none; }
+  .rg-status-btn span { font-family: var(--font-display); font-size: 13px; font-weight: 800; }
+  .rg-status-btn small { color: var(--muted); font-size: 11px; line-height: 1.35; font-weight: 600; }
+  .rg-status-btn.active { background: linear-gradient(135deg, rgba(47,159,150,.18), #ffffff 62%); color: var(--ink); border-color: var(--cat-color, var(--teal)); box-shadow: 0 0 0 2px rgba(47,159,150,.2), 0 14px 30px rgba(20,33,61,.14); transform: translateY(-1px); }
+  .rg-status-btn.active::before { width: 8px; opacity: 1; }
+  .rg-status-btn.active::after { content: "Selected"; display: inline-flex; position: absolute; top: 9px; right: 9px; padding: 3px 7px; border-radius: 999px; background: var(--cat-color, var(--teal)); color: #ffffff; font-family: var(--font-mono); font-size: 9px; letter-spacing: .04em; text-transform: uppercase; font-weight: 800; }
+  .rg-status-btn.active span { color: var(--cat-color, var(--teal)); }
+  .rg-status-btn.active small { color: #25384b; padding-right: 58px; }
+  .rg-export { color: #ffffff; text-decoration: none; font-family: var(--font-body); font-size: 11.5px; border: 1px solid transparent; border-radius: 999px; padding: 10px 12px; text-align: center; background: linear-gradient(135deg, #3868f6, #4ba8ff); box-shadow: 0 8px 16px rgba(56,104,246,.18); font-weight: 700; }
+  .rg-search-btn { padding: 10px 14px; border-radius: 10px; border: none; background: linear-gradient(135deg, #4ba8ff, #2f9f96); color: #fff; font-weight: 700; font-size: 13.5px; cursor: pointer; font-family: var(--font-body); box-shadow: 0 6px 14px rgba(56,104,246,.16); transition: all .2s ease; }
+  .rg-search-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(56,104,246,.24); }
+  .rg-search-btn:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(56,104,246,.16); }
+  .rg-menu-nav { display: flex; gap: 10px; padding: 18px 28px 0; flex-wrap: wrap; }
+  .rg-menu-btn { padding: 10px 14px; border-radius: 999px; border: 1px solid #dfe8f0; background: #ffffff; color: var(--muted); font-weight: 700; font-family: var(--font-body); box-shadow: 0 6px 14px rgba(20,33,61,.04); }
+  .rg-menu-btn.active { background: linear-gradient(135deg, #3868f6, #2f9f96); color: #ffffff; border-color: transparent; }
+  .rg-menu-panel { display: none; }
+  .rg-menu-panel.active { display: block; }
+  .rg-search-card { margin: 16px 28px 0; padding: 16px 18px; border-radius: 18px; background: linear-gradient(135deg, #f8fbff, #f3f7fd); border: 1px solid #e4ebf2; box-shadow: 0 8px 20px rgba(20,33,61,.04); }
+  .rg-search-card h3 { margin: 0 0 6px; font-family: var(--font-display); color: var(--ink); font-size: 18px; }
+  .rg-search-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+  .rg-explore-toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: center; padding: 16px 28px; border-bottom: 1px solid rgba(47,159,150,.18); background: linear-gradient(90deg, rgba(255,255,255,.96), rgba(239,251,249,.96), rgba(255,248,239,.96)); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 20; box-shadow: 0 12px 28px rgba(20,33,61,.08); }
+  .rg-tabs { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding: 12px 28px 14px; border-bottom: 1px solid var(--hairline); background: rgba(255,255,255,.92); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 20; }
+  .rg-tab { padding: 9px 13px; }
+  .rg-tab:hover { transform: translateY(-1px); border-color: rgba(47,159,150,.3); color: var(--ink); }
+  .rg-tab.active { color: #ffffff; background: linear-gradient(135deg, #3868f6, #2f9f96); border-color: transparent; box-shadow: 0 8px 16px rgba(56,104,246,.16); }
+  .rg-panel { display: none; padding: 24px 28px 28px; }
+  .rg-panel.active { display: block; animation: fadeIn .25s ease; }
   .rg-loading, .rg-empty { padding: 34px 18px; text-align: center; color: var(--muted); font-size: 13px; }
+  .rg-progress-card { max-width: 620px; margin: 34px auto; padding: 24px; border: 1px solid rgba(47,159,150,.2); border-radius: 18px; background: linear-gradient(135deg, #ffffff, #f6fbff); box-shadow: 0 14px 34px rgba(20,33,61,.08); text-align: left; }
+  .rg-progress-title { margin: 0 0 8px; color: var(--ink); font-family: var(--font-display); font-size: 20px; font-weight: 800; }
+  .rg-progress-copy { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+  .rg-progress-track { position: relative; height: 12px; border-radius: 999px; background: #e8f1f7; overflow: hidden; box-shadow: inset 0 1px 2px rgba(20,33,61,.08); }
+  .rg-progress-fill { position: absolute; inset: 0 auto 0 0; width: 42%; border-radius: inherit; background: linear-gradient(90deg, #3868f6, var(--teal), var(--brass)); animation: rgProgress 1.15s ease-in-out infinite; }
+  .rg-progress-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
+  .rg-progress-step { padding: 8px 10px; border-radius: 12px; background: #f7fbfd; border: 1px solid #e2ebf2; color: #405366; font-size: 11.5px; font-weight: 700; text-align: center; }
   .rg-grid { display: grid; gap: 14px; }
   .rg-kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .rg-cardbox { background: linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015)); border: 1px solid var(--hairline); border-radius: 14px; padding: 15px; min-width: 0; }
+  .rg-cardbox { background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%); border: 1px solid #e5ebf2; border-radius: 18px; padding: 16px; min-width: 0; box-shadow: 0 10px 24px rgba(20,33,61,.06); transition: transform .2s ease, border-color .2s ease; }
+  .rg-cardbox:hover { transform: translateY(-1px); border-color: rgba(47,159,150,.26); }
   .rg-kpi-label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin-bottom: 7px; }
-  .rg-kpi-value { font-family: var(--font-display); font-size: 26px; line-height: 1.05; color: var(--paper); }
+  .rg-kpi-value { font-family: var(--font-display); font-size: 26px; line-height: 1.05; color: var(--ink); font-weight: 800; }
   .rg-kpi-note { font-size: 12px; color: var(--muted); margin-top: 7px; }
-  .rg-eureka { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 14px; }
-  .rg-eureka .rg-cardbox { border-left: 3px solid var(--brass); }
-  .rg-eureka .positive { border-left-color: var(--teal); }
-  .rg-eureka .negative { border-left-color: var(--rust); }
-  .rg-eureka .warning { border-left-color: var(--brass); }
-  .rg-eureka-title { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
-  .rg-eureka-value { font-family: var(--font-display); font-size: 21px; margin: 8px 0 6px; }
-  .rg-eureka-note { font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+  .rg-report { display: grid; gap: 14px; }
+  .rg-report-hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(260px, .65fr); gap: 18px; align-items: stretch; padding: 22px; border: 1px solid rgba(47,159,150,.18); border-radius: 20px; background: linear-gradient(135deg, #ffffff 0%, #f3fbfb 52%, #fff8ef 100%); box-shadow: 0 14px 34px rgba(20,33,61,.07); }
+  .rg-report-kicker { margin: 0 0 8px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--teal); font-weight: 700; }
+  .rg-report-title { margin: 0; font-family: var(--font-display); font-size: clamp(25px, 3vw, 38px); line-height: 1.08; color: var(--ink); font-weight: 800; }
+  .rg-report-copy { margin: 12px 0 0; max-width: 760px; color: #405366; font-size: 14px; line-height: 1.65; }
+  .rg-report-stats { display: grid; gap: 10px; align-content: center; }
+  .rg-stat-line { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 12px 14px; border-radius: 14px; background: rgba(255,255,255,.78); border: 1px solid rgba(223,231,239,.9); }
+  .rg-stat-line span { color: var(--muted); font-size: 12px; font-weight: 700; }
+  .rg-stat-line strong { color: var(--ink); font-family: var(--font-display); font-size: 22px; }
+  .rg-insight-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .rg-insight-card { position: relative; overflow: hidden; min-height: 140px; border-radius: 18px; border: 1px solid #e4ebf2; background: #ffffff; padding: 16px; box-shadow: 0 10px 24px rgba(20,33,61,.05); }
+  .rg-insight-card::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--teal); }
+  .rg-insight-card.warning::before { background: var(--brass); }
+  .rg-insight-card.negative::before { background: var(--rust); }
+  .rg-insight-card h3 { margin: 0 0 8px; font-family: var(--font-display); font-size: 17px; color: var(--ink); }
+  .rg-insight-card p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.55; }
+  .rg-insight-value { display: block; margin: 8px 0; font-family: var(--font-display); font-size: 27px; line-height: 1.05; color: var(--ink); font-weight: 800; }
+  .rg-health-meter { display: grid; gap: 12px; }
+  .rg-meter-row { display: grid; grid-template-columns: minmax(105px, .75fr) minmax(120px, 1fr) 48px; gap: 10px; align-items: center; font-size: 12px; }
+  .rg-meter-row span:first-child { color: var(--ink); font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rg-meter-row span:last-child { color: var(--muted); text-align: right; font-family: var(--font-mono); }
+  .rg-meter-track { height: 10px; border-radius: 999px; background: #eaf1f7; overflow: hidden; }
+  .rg-meter-fill { height: 100%; min-width: 2px; border-radius: inherit; background: var(--teal); }
+  .rg-meter-fill.warning { background: var(--brass); }
+  .rg-meter-fill.negative { background: var(--rust); }
+  .rg-sector-viz { display: grid; gap: 11px; }
+  .rg-sector-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(120px, 1.25fr) auto; gap: 10px; align-items: center; }
+  .rg-sector-name { color: var(--ink); font-size: 12px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rg-sector-track { position: relative; height: 14px; border-radius: 999px; background: #eaf1f7; overflow: hidden; box-shadow: inset 0 1px 2px rgba(20,33,61,.06); }
+  .rg-sector-fill { height: 100%; min-width: 3px; border-radius: inherit; background: linear-gradient(90deg, var(--teal), #7ccfc5); }
+  .rg-sector-meta { text-align: right; color: var(--muted); font-family: var(--font-mono); font-size: 10.5px; white-space: nowrap; }
+  .rg-town-shortlist { display: grid; gap: 9px; }
+  .rg-town-row { display: grid; grid-template-columns: 28px minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid #edf2f7; }
+  .rg-town-row:last-child { border-bottom: none; }
+  .rg-town-rank { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 999px; background: #edf8f7; color: var(--teal); font-family: var(--font-mono); font-size: 11px; font-weight: 800; }
+  .rg-town-name { color: var(--ink); font-weight: 800; }
+  .rg-town-reason { color: var(--muted); font-size: 12px; margin-top: 3px; }
+  .rg-town-score { color: var(--ink); font-family: var(--font-display); font-weight: 800; }
   .rg-split { display: grid; grid-template-columns: 1.2fr .8fr; gap: 14px; margin-top: 14px; }
-  .rg-section-title { font-family: var(--font-display); font-size: 19px; margin: 0 0 6px; }
-  .rg-section-sub { color: var(--muted); margin: 0 0 14px; font-size: 12.5px; }
+  .rg-section-title { font-family: var(--font-display); font-size: 19px; margin: 0 0 6px; color: var(--ink); font-weight: 700; }
+  .rg-section-sub { color: var(--muted); margin: 0 0 14px; font-size: 12.5px; line-height: 1.55; }
   .rg-bars { display: grid; gap: 10px; }
   .rg-bar-row { display: grid; grid-template-columns: minmax(110px, 1fr) minmax(100px, 2fr) 68px; gap: 10px; align-items: center; font-size: 12px; color: var(--muted); }
-  .rg-bar-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-  .rg-bar-track { height: 9px; border-radius: 999px; background: var(--panel-3); overflow: hidden; }
-  .rg-bar-fill { height: 100%; width: 0; border-radius: 999px; background: var(--teal); }
-  .rg-bar-fill.risk { background: var(--rust); }
-  .rg-chart { width: 100%; min-height: 240px; background: rgba(0,0,0,.08); border: 1px solid var(--hairline); border-radius: 12px; padding: 10px; overflow: hidden; }
+  .rg-bar-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ink); }
+  .rg-bar-track { height: 9px; border-radius: 999px; background: #e9f0f7; overflow: hidden; }
+  .rg-bar-fill { height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--teal), #66cabd); }
+  .rg-bar-fill.risk { background: linear-gradient(90deg, var(--rust), #ff978f); }
+  .rg-chart { width: 100%; min-height: 240px; background: linear-gradient(180deg, #f8fbff, #f2f7fb); border: 1px solid #e4ebf2; border-radius: 14px; padding: 10px; overflow: hidden; }
   .rg-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .rg-table th { text-align: left; color: var(--muted); font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .04em; border-bottom: 1px solid var(--hairline); padding: 8px 6px; }
-  .rg-table td { border-bottom: 1px solid rgba(51,65,84,.65); padding: 9px 6px; vertical-align: top; }
+  .rg-table th { text-align: left; color: var(--muted); font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .04em; border-bottom: 1px solid #e7edf3; padding: 8px 6px; }
+  .rg-table td { border-bottom: 1px solid #eef3f8; padding: 9px 6px; vertical-align: top; color: var(--ink); }
   .rg-table td.num, .rg-table th.num { text-align: right; font-family: var(--font-mono); }
-  .rg-map-layout { display: grid; grid-template-columns: 1fr 320px; gap: 14px; min-height: 640px; }
-  .rg-map-card { position: relative; min-height: 640px; border: 1px solid var(--hairline); border-radius: 14px; overflow: hidden; background: var(--panel-2); }
+  .rg-th-help { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+  .rg-info-dot { width: 15px; height: 15px; display: inline-grid; place-items: center; border-radius: 999px; border: 1px solid #b7c6d6; color: #496477; background: #f8fbfd; font-family: var(--font-mono); font-size: 10px; font-weight: 900; cursor: help; }
+  .rg-info-dot::after { content: attr(data-tip); position: absolute; z-index: 900; left: 0; top: calc(100% + 8px); width: 240px; padding: 9px 10px; border-radius: 10px; background: #14213d; color: #ffffff; box-shadow: 0 14px 30px rgba(20,33,61,.22); font-family: var(--font-body); font-size: 11.5px; line-height: 1.45; letter-spacing: 0; text-transform: none; text-align: left; opacity: 0; pointer-events: none; transform: translateY(-3px); transition: opacity .15s ease, transform .15s ease; }
+  .rg-table th.num .rg-info-dot::after { left: auto; right: 0; }
+  .rg-info-dot:hover::after, .rg-info-dot:focus-visible::after { opacity: 1; transform: translateY(0); }
+  .rg-map-layout { display: grid; grid-template-columns: 1fr 340px; gap: 14px; min-height: 640px; }
+  .rg-map-card { position: relative; min-height: 640px; border: 1px solid #24384d; border-radius: 18px; overflow: hidden; background: #14213d; box-shadow: 0 14px 32px rgba(20,33,61,.09); }
   #rg-heatmap { height: 100%; min-height: 640px; }
-  .rg-map-tools { position: absolute; z-index: 450; left: 14px; top: 14px; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 28px); }
-  .rg-map-tools select { background: rgba(27,36,48,.92); color: var(--paper); border: 1px solid var(--hairline); border-radius: 9px; padding: 8px; font-size: 12px; }
+  .rg-map-tools { position: absolute; z-index: 450; left: 14px; top: 14px; display: flex; gap: 8px; flex-wrap: wrap; max-width: calc(100% - 28px); padding: 8px; border-radius: 16px; background: rgba(10,18,31,.74); border: 1px solid rgba(255,255,255,.18); box-shadow: 0 14px 30px rgba(0,0,0,.28); backdrop-filter: blur(10px); }
+  .rg-map-mode-btn { min-width: 126px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #e8f1f7; cursor: pointer; font-family: var(--font-body); text-align: left; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+  .rg-map-mode-btn strong { display: block; font-size: 12.5px; font-weight: 900; color: #ffffff; }
+  .rg-map-mode-btn span { display: block; margin-top: 2px; font-size: 10.5px; color: #b9c8d8; font-weight: 700; }
+  .rg-map-mode-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.14); }
+  .rg-map-mode-btn.active { background: linear-gradient(135deg, #f0b83f, #e2572f); color: #111827; border-color: rgba(255,255,255,.7); box-shadow: 0 8px 22px rgba(226,87,47,.34); }
+  .rg-map-mode-btn.active strong, .rg-map-mode-btn.active span { color: #111827; }
+  .rg-map-dot-toggle { min-width: 126px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #e8f1f7; cursor: pointer; font-family: var(--font-body); text-align: left; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+  .rg-map-dot-toggle strong { display: block; font-size: 12.5px; font-weight: 900; color: #ffffff; }
+  .rg-map-dot-toggle span { display: block; margin-top: 2px; font-size: 10.5px; color: #b9c8d8; font-weight: 700; }
+  .rg-map-dot-toggle:hover { transform: translateY(-1px); background: rgba(255,255,255,.14); }
+  .rg-map-dot-toggle.active { background: linear-gradient(135deg, #1d4f91, #008f8c); border-color: rgba(255,255,255,.7); box-shadow: 0 8px 22px rgba(0,143,140,.32); }
+  .rg-map-legend { position: absolute; z-index: 450; left: 14px; bottom: 14px; display: grid; gap: 7px; min-width: 190px; padding: 12px; border-radius: 14px; border: 1px solid rgba(223,231,239,.9); background: rgba(255,255,255,.94); box-shadow: 0 12px 28px rgba(20,33,61,.12); }
+  .rg-map-legend-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
+  .rg-map-legend-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; color: var(--ink); font-size: 11.5px; font-weight: 700; }
+  .rg-map-legend-scale { height: 11px; border-radius: 999px; background: linear-gradient(90deg, #1d4f91, #008f8c, #f0b83f, #e2572f, #7a1236); box-shadow: inset 0 1px 2px rgba(20,33,61,.12); }
+  .rg-map-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 14px; }
+  .rg-map-stat { padding: 11px 12px; border-radius: 14px; background: #f6fafc; border: 1px solid #e1eaf1; }
+  .rg-map-stat span { display: block; color: var(--muted); font-size: 10px; font-family: var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
+  .rg-map-stat strong { display: block; margin-top: 5px; color: var(--ink); font-family: var(--font-display); font-size: 21px; }
   .rg-list-wrap { display: grid; grid-template-columns: 390px 1fr; gap: 14px; }
-  .rg-list { overflow-y: auto; max-height: 640px; border: 1px solid var(--hairline); border-radius: 14px; }
-  .rg-card { display: block; width: 100%; text-align: left; padding: 14px 16px; cursor: pointer; border: none; border-bottom: 1px solid var(--hairline); background: transparent; color: var(--paper); border-left: 3px solid transparent; }
-  .rg-card:hover, .rg-card.selected { background: var(--panel); }
+  .rg-company-tools { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 0 0 12px; }
+  .rg-company-tools .rg-count { margin: 0; }
+  .rg-list { overflow-y: auto; max-height: 640px; border: 1px solid #e4ebf2; border-radius: 16px; background: #ffffff; box-shadow: 0 10px 24px rgba(20,33,61,.05); }
+  .rg-card { display: block; width: 100%; text-align: left; padding: 14px 16px; cursor: pointer; border: none; border-bottom: 1px solid #eef3f8; background: transparent; color: var(--ink); border-left: 3px solid transparent; }
+  .rg-card:hover, .rg-card.selected { background: #f7fbff; }
   .rg-card.selected { border-left-color: var(--brass); }
-  .rg-card-name { font-size: 14px; font-weight: 650; margin-bottom: 5px; }
+  .rg-card-name { font-size: 14px; font-weight: 700; margin-bottom: 5px; color: var(--ink); }
   .rg-card-meta { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-bottom: 7px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .rg-card-sic { font-size: 12px; color: var(--muted); line-height: 1.35; }
   .rg-pill { display: inline-block; font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em; padding: 2px 7px; border-radius: 999px; border: 1px solid; }
-  .rg-loadmore { display: block; width: 100%; padding: 13px; background: var(--panel-2); border: none; border-top: 1px solid var(--hairline); color: var(--teal); }
-  .rg-detail { background: var(--paper); color: #1B2430; border-radius: 14px; padding: 18px; min-height: 220px; border: 1px solid rgba(0,0,0,.08); }
-  .rg-detail h3 { font-family: var(--font-display); font-size: 22px; margin: 0 0 12px; }
-  .rg-detail-row { font-size: 12.5px; color: #4B5566; margin-bottom: 5px; }
-  .rg-detail-row b { color: #1B2430; font-family: var(--font-mono); font-weight: 600; }
+  .rg-loadmore { display: block; width: 100%; padding: 13px; background: #f7fbff; border: none; border-top: 1px solid #eef3f8; color: var(--teal); font-weight: 700; }
+  .rg-detail { background: linear-gradient(135deg, #fdf9f0, #f4f8fb); color: #1f2d3d; border-radius: 18px; padding: 18px; min-height: 220px; border: 1px solid #e7ebf0; box-shadow: 0 8px 20px rgba(20,33,61,.05); }
+  .rg-detail h3 { font-family: var(--font-display); font-size: 22px; margin: 0 0 12px; color: var(--ink); font-weight: 800; }
+  .rg-detail-row { font-size: 12.5px; color: #516273; margin-bottom: 5px; }
+  .rg-detail-row b { color: #1f2d3d; font-family: var(--font-mono); font-weight: 600; }
   .rg-footnote { color: var(--muted); font-size: 11.5px; line-height: 1.45; margin-top: 12px; }
   .rg-count { font-family: var(--font-mono); color: var(--muted); font-size: 12px; margin: 0 0 12px; }
-  .leaflet-popup-content { color: #1B2430; }
+  .leaflet-popup-content { color: #1f2d3d; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes rgProgress { 0% { left: -44%; } 50% { left: 36%; } 100% { left: 104%; } }
   @media (max-width: 980px) {
     .rg-controls { grid-template-columns: 1fr; }
+    .rg-keyword-input { max-width: none; }
     .rg-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .rg-eureka, .rg-split, .rg-map-layout, .rg-list-wrap { grid-template-columns: 1fr; }
+    .rg-report-hero, .rg-insight-grid, .rg-split, .rg-map-layout, .rg-list-wrap, .rg-quick-guide { grid-template-columns: 1fr; }
     .rg-map-card, #rg-heatmap { min-height: 460px; }
   }
   @media (max-width: 600px) {
-    .rg-header, .rg-panel, .rg-controls, .rg-tabs { padding-left: 18px; padding-right: 18px; }
+    .rg-header, .rg-panel, .rg-controls, .rg-tabs, .rg-explore-toolbar { padding-left: 18px; padding-right: 18px; }
     .rg-banner { margin-left: 18px; margin-right: 18px; }
+    .rg-explore-filter { max-width: none; flex-basis: 100%; }
+    .rg-explore-filter-shell { grid-template-columns: 1fr; gap: 8px; padding: 12px; }
+    .rg-clear-place { width: 100%; }
+    .rg-filter-label { min-width: 0; }
     .rg-kpis { grid-template-columns: 1fr; }
-    .rg-eureka { grid-template-columns: 1fr; }
   }
 </style>
 
@@ -177,76 +303,106 @@
   });
 
   const root = document.getElementById("register-app");
+  const statusHelp = {
+    "": "Show every company status",
+    Active: "Normally registered and trading",
+    "Active - At Risk": "Active, but needs caution",
+    Insolvency: "Formal insolvency process",
+    Liquidation: "Being wound up or closed",
+    Dissolved: "No longer on the register",
+    Other: "Any other registry status"
+  };
   const categoryButtons = ["", ...Object.keys(STATUS_CATEGORIES)].map((cat) => {
     const label = cat === "" ? "All status" : metaFor(cat).chip;
     const colorVar = cat === "" ? "" : `style="--cat-color:${metaFor(cat).color}"`;
-    return `<button class="rg-status-btn ${cat === "" ? "active" : ""}" data-category="${cat}" ${colorVar}>${label}</button>`;
+    return `<button type="button" class="rg-status-btn ${cat === "" ? "active" : ""}" data-category="${cat}" aria-pressed="${cat === "" ? "true" : "false"}" ${colorVar}><span>${label}</span><small>${statusHelp[cat] || "Filter by this status"}</small></button>`;
   }).join("");
 
   root.innerHTML = `
-    <div class="rg-header">
-      <p class="rg-eyebrow">UK Market Intelligence — Companies House</p>
-      <h2 class="rg-title">Market Research Radar</h2>
-      <p class="rg-subtitle">Search a sector, town or postcode and get full-population insight: density heatmap, formation pulse, opportunity pockets, stress signals and the companies behind the pattern.</p>
-    </div>
-    <div class="rg-banner">
-      <span class="rg-stamp-badge" id="rg-source-badge">DEMO DATA</span>
-      <span><b>Insight mode:</b> the company list is paginated for speed, but the new radar, heatmap and trend tabs calculate over the full matching search universe.</span>
-    </div>
-    <div class="rg-controls">
-      <input type="text" id="rg-q" placeholder='Sector or keyword: "pilates", "software", "bakery"…' />
-      <input type="text" id="rg-place" placeholder="Town, postcode, postcode district" />
-      <a href="#" class="rg-export" id="rg-export">Export CSV <span style="opacity:.7">(first 50k)</span></a>
-      <div class="rg-status-group" id="rg-status-group">${categoryButtons}</div>
-    </div>
-    <div class="rg-tabs" role="tablist">
-      <button class="rg-tab active" data-tab="radar">Market Radar</button>
-      <button class="rg-tab" data-tab="heatmap">Heat Map</button>
-      <button class="rg-tab" data-tab="trends">Time Trend</button>
-      <button class="rg-tab" data-tab="opportunity">Opportunity Finder</button>
-      <button class="rg-tab" data-tab="companies">Companies</button>
-    </div>
-    <section class="rg-panel active" id="rg-panel-radar"><div class="rg-loading">Building market radar…</div></section>
-    <section class="rg-panel" id="rg-panel-heatmap">
-      <div class="rg-map-layout">
-        <div class="rg-map-card">
-          <div class="rg-map-tools">
-            <select id="rg-heat-mode"><option value="count">Density</option><option value="recent_count">Recent formation</option><option value="risk_count">Stress / risk</option></select>
+    <div class="rg-shell">
+      <div class="rg-header">
+        <div class="rg-header-main">
+          <div>
+            <p class="rg-eyebrow">UK Market Intelligence • Companies House</p>
+            <h2 class="rg-title">Market Research Radar</h2>
+
           </div>
-          <div id="rg-heatmap"></div>
+
         </div>
-        <div id="rg-heat-summary" class="rg-cardbox"><div class="rg-loading">Loading heatmap…</div></div>
+
       </div>
-    </section>
-    <section class="rg-panel" id="rg-panel-trends"><div class="rg-loading">Building trend view…</div></section>
-    <section class="rg-panel" id="rg-panel-opportunity"><div class="rg-loading">Scoring opportunities…</div></section>
-    <section class="rg-panel" id="rg-panel-companies">
-      <p class="rg-count" id="rg-count"></p>
-      <div class="rg-list-wrap">
-        <div class="rg-list" id="rg-list"><div class="rg-loading">Checking data source…</div></div>
-        <div class="rg-detail" id="rg-detail"><h3>Select a company</h3><p class="rg-detail-row">Use this tab to inspect the rows behind the market signal.</p></div>
+
+      <div class="rg-menu-nav" role="tablist" aria-label="Main workflow">
+        <button class="rg-menu-btn active" data-menu="search">Search</button>
+        <button class="rg-menu-btn" data-menu="explore">Explore</button>
+        <button class="rg-menu-btn" data-menu="act">Companies</button>
       </div>
-    </section>
+      <section class="rg-menu-panel active" id="rg-menu-search">
+        <div class="rg-controls">
+          <input type="text" id="rg-q" class="rg-keyword-input" placeholder='Try "pilates"' />
+          <button id="rg-search-btn" class="rg-search-btn">Search</button>
+          <div class="rg-status-panel">
+            <div class="rg-status-panel-head"><strong>Company status</strong><span>Select one or more, or use All status.</span></div>
+            <div class="rg-status-group" id="rg-status-group">${categoryButtons}</div>
+          </div>
+        </div>
+      </section>
+      <section class="rg-menu-panel" id="rg-menu-explore">
+        <div class="rg-explore-toolbar">
+          <div class="rg-place-wrapper rg-explore-filter">
+            <div class="rg-explore-filter-shell">
+              <div class="rg-filter-label"><span>Location focus</span><strong>Town filter</strong></div>
+              <input type="text" id="rg-explore-place" placeholder="Type a town, postcode or district" />
+              <button type="button" class="rg-clear-place" id="rg-clear-place" hidden>Clear</button>
+            </div>
+            <div class="rg-place-autocomplete" id="rg-explore-place-autocomplete"></div>
+          </div>
+        </div>
+        <section class="rg-panel active" id="rg-panel-explore"><div class="rg-loading">Run a search to build the Explore report.</div></section>
+      </section>
+      <section class="rg-menu-panel" id="rg-menu-act">
+        <div class="rg-search-card">
+          <h3>Company details</h3>
+          <p>Review the individual company records behind the market signal, including status, location, incorporation date and SIC description.</p>
+        </div>
+        <div class="rg-panel active" id="rg-panel-companies" style="padding-top: 12px;">
+          <div class="rg-company-tools">
+            <p class="rg-count" id="rg-count"></p>
+            <a href="#" class="rg-export" id="rg-export">Export CSV <span style="opacity:.7">(first 50k)</span></a>
+          </div>
+          <div class="rg-list-wrap">
+            <div class="rg-list" id="rg-list"><div class="rg-empty">Run a search to see company records.</div></div>
+            <div class="rg-detail" id="rg-detail"><h3>Select a company</h3><p class="rg-detail-row">Use this view to inspect one company at a time.</p></div>
+          </div>
+        </div>
+      </section>
+    </div>
   `;
 
   const els = {
-    q: root.querySelector("#rg-q"), place: root.querySelector("#rg-place"), export: root.querySelector("#rg-export"),
-    statusGroup: root.querySelector("#rg-status-group"), badge: root.querySelector("#rg-source-badge"), count: root.querySelector("#rg-count"),
-    list: root.querySelector("#rg-list"), detail: root.querySelector("#rg-detail"), heatSummary: root.querySelector("#rg-heat-summary"), heatMode: root.querySelector("#rg-heat-mode"),
-    radar: root.querySelector("#rg-panel-radar"), trends: root.querySelector("#rg-panel-trends"), opportunity: root.querySelector("#rg-panel-opportunity"), heatPanel: root.querySelector("#rg-panel-heatmap")
+    q: root.querySelector("#rg-q"), export: root.querySelector("#rg-export"),
+    explorePlace: root.querySelector("#rg-explore-place"), exploreAutocomplete: root.querySelector("#rg-explore-place-autocomplete"), clearPlace: root.querySelector("#rg-clear-place"),
+    statusGroup: root.querySelector("#rg-status-group"), count: root.querySelector("#rg-count"),
+    list: root.querySelector("#rg-list"), detail: root.querySelector("#rg-detail"), heatSummary: root.querySelector("#rg-heat-summary"), heatModeButtons: root.querySelectorAll(".rg-map-mode-btn"), heatDotsToggle: root.querySelector("#rg-heat-dots-toggle"),
+    radar: root.querySelector("#rg-panel-explore"),
+    mainMenu: root.querySelectorAll(".rg-menu-btn"), menuPanels: root.querySelectorAll(".rg-menu-panel"), searchBtn: root.querySelector("#rg-search-btn")
   };
 
-  let isLive = false, categoryFilter = "", selectedIndex = null;
+  let isLive = false, categoryFilter = [], selectedIndex = null;
   const PAGE_SIZE = 200;
-  const state = { items: [], total: 0, offset: 0, insights: null };
+  const state = { items: [], total: 0, offset: 0, insights: null, hasSearched: false, loadingExplore: false, heatMode: 'count', showMapDots: false };
   let heatMap = null, heatLayers = [];
+  let searchRunId = 0;
 
   function fmt(n) { return Number(n || 0).toLocaleString(); }
   function pct(n, d) { return d ? ((n / d) * 100).toFixed(1) : "0.0"; }
   function escapeHtml(str) { return String(str ?? "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-  function params() { return { q: els.q.value.trim(), place: els.place.value.trim(), category: categoryFilter }; }
+  function params() {
+    const cat = Array.isArray(categoryFilter) ? (categoryFilter.length ? categoryFilter.join('|') : '') : (categoryFilter || '');
+    return { q: els.q.value.trim(), place: els.explorePlace?.value?.trim() || '', category: cat };
+  }
   function paramsToQuery(extra = {}) { const p = new URLSearchParams({ ...params(), ...extra }); return p.toString(); }
-  function setLiveBadge() { els.badge.textContent = isLive ? "LIVE API" : "DEMO DATA"; els.badge.classList.toggle("live", isLive); }
+  function setLiveBadge() { /* badge removed from UI; keep isLive state for logic only */ }
 
   async function checkLiveSource() {
     try {
@@ -273,11 +429,11 @@
 
   function applyDemoFilters() {
     const q = els.q.value.trim().toLowerCase();
-    const place = els.place.value.trim().toLowerCase();
+    const place = els.explorePlace?.value?.trim().toLowerCase() || "";
     return DEMO_DATA.filter((item) => {
       const matchesQ = !q || item.company_name.toLowerCase().includes(q) || (item.sic_text || "").toLowerCase().includes(q);
       const matchesPlace = !place || (item.town || "").toLowerCase().includes(place) || (item.postcode || "").toLowerCase().includes(place);
-      const matchesCategory = !categoryFilter || item.status_category === categoryFilter;
+      const matchesCategory = !categoryFilter || (Array.isArray(categoryFilter) ? categoryFilter.length === 0 || categoryFilter.includes(item.status_category) : item.status_category === categoryFilter);
       return matchesQ && matchesPlace && matchesCategory;
     });
   }
@@ -300,6 +456,12 @@
     const trend = years.map(([year, rows]) => ({ year: Number(year), count: rows.length }));
     const maxYear = trend.length ? trend[trend.length - 1].year : new Date().getFullYear();
     const recentStart = maxYear - 1, prevStart = maxYear - 3, prevEnd = maxYear - 2;
+    const scoreWeights = { recentRate: 40, activeRate: 25, growth: 15, riskRate: 20 };
+    function growthScore(recent, previous) {
+      if (!previous) return recent > 0 ? 100 : 0;
+      const growthPct = ((recent - previous) / previous) * 100;
+      return Math.max(0, Math.min(100, (growthPct + 50) * (100 / 150)));
+    }
     function groupStats(map, labelName) {
       return [...map.entries()].map(([label, rows]) => {
         const count = rows.length;
@@ -309,46 +471,34 @@
         const previous = rows.filter(r => r.incorporation_year >= prevStart && r.incorporation_year <= prevEnd).length;
         const growth = previous ? Number((((recent - previous) / previous) * 100).toFixed(1)) : null;
         const activeRate = Number(pct(active, count)), riskRate = Number(pct(risk, count));
-        const growthBonus = previous === 0 && recent > 0 ? 20 : Math.max(-20, Math.min(30, (growth || 0) / 4));
-        const score = Number((recent * 1.8 + activeRate * .35 - riskRate * .9 + growthBonus - Math.log10(Math.max(count,1))*3.5).toFixed(1));
-        return { [labelName]: label, count, active_count: active, risk_count: risk, recent_count: recent, previous_count: previous, growth_pct: growth, active_rate: activeRate, risk_rate: riskRate, opportunity_score: score };
+        const recentRate = Number(pct(recent, count));
+        const growthContribution = Number(growthScore(recent, previous).toFixed(1));
+        const score = Number(((recentRate * scoreWeights.recentRate + activeRate * scoreWeights.activeRate + growthContribution * scoreWeights.growth - riskRate * scoreWeights.riskRate) / 100).toFixed(1));
+        return { [labelName]: label, count, active_count: active, risk_count: risk, recent_count: recent, recent_rate: recentRate, previous_count: previous, growth_pct: growth, growth_score: growthContribution, active_rate: activeRate, risk_rate: riskRate, opportunity_score: score };
       }).sort((a,b) => b.count - a.count);
     }
     const towns = groupStats(groupBy(items, i => i.town), "town");
     const sectors = groupStats(groupBy(items, i => i.sic_text), "sic_text");
-    const points = items.map(i => ({ outcode: (i.postcode || '').split(' ')[0], postcode: i.postcode, lat: i.lat, lon: i.lon, count: 1, risk_count: NEGATIVE_CATEGORIES.has(i.status_category) ? 1 : 0, recent_count: i.incorporation_year >= recentStart ? 1 : 0, intensity: 1 }));
+    const points = [...groupBy(items, i => (i.postcode || '').split(' ')[0]).entries()].map(([outcode, rows]) => {
+      const count = rows.length;
+      return {
+        outcode,
+        postcode: outcode,
+        lat: rows.reduce((sum, row) => sum + Number(row.lat || 0), 0) / count,
+        lon: rows.reduce((sum, row) => sum + Number(row.lon || 0), 0) / count,
+        count,
+        risk_count: rows.filter(row => NEGATIVE_CATEGORIES.has(row.status_category)).length,
+        recent_count: rows.filter(row => row.incorporation_year >= recentStart).length,
+        intensity: count
+      };
+    });
     const active = categoryCounts.Active || 0;
     const eureka = [
-      { sentiment: active / Math.max(total, 1) >= .85 ? "positive" : "warning", title: "Market health", value: `${pct(active,total)}% active`, note: `${fmt(total-active)} companies are outside the clean Active bucket.` },
-      trend.length >= 2 ? { sentiment: trend[trend.length-1].count >= trend[trend.length-2].count ? "positive" : "negative", title: "Latest formation pulse", value: `${trend[trend.length-1].year}: ${trend[trend.length-1].count}`, note: `Versus ${trend[trend.length-2].year}: ${trend[trend.length-2].count}.` } : { sentiment: "neutral", title: "Formation pulse", value: "Not enough years", note: "Use the live dataset for a stronger signal." },
-      towns[0] ? { sentiment: "positive", title: "Where to look first", value: towns.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score)[0].town, note: "Highest opportunity score in the filtered demo set." } : { sentiment: "neutral", title: "No location", value: "—", note: "Broaden the search." }
+      { sentiment: active / Math.max(total, 1) >= .85 ? "positive" : "warning", title: "Company health", value: `${pct(active,total)}% active`, note: `${fmt(total-active)} companies are not listed as Active.` },
+      trend.length >= 2 ? { sentiment: trend[trend.length-1].count >= trend[trend.length-2].count ? "positive" : "negative", title: "Newest companies", value: `${trend[trend.length-1].year}: ${trend[trend.length-1].count}`, note: `${trend[trend.length-2].year} had ${trend[trend.length-2].count}.` } : { sentiment: "neutral", title: "Newest companies", value: "Not enough data", note: "Use live data for a clearer view." },
+      towns[0] ? { sentiment: "positive", title: "Best town to check", value: towns.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score)[0].town, note: "This town has the highest opportunity score in these results." } : { sentiment: "neutral", title: "No town found", value: "—", note: "Try a broader search." }
     ];
     return { total_count: total, max_incorporation_year: maxYear, comparison_window: { recent: `${recentStart}-${maxYear}`, previous: `${prevStart}-${prevEnd}` }, status: { categories: categoryCounts, raw: [] }, trend, towns, sectors, rankings: { towns_by_opportunity: towns.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score), towns_by_risk: towns.slice().sort((a,b)=>b.risk_rate-a.risk_rate), sectors_by_opportunity: sectors.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score), sectors_by_risk: sectors.slice().sort((a,b)=>b.risk_rate-a.risk_rate) }, heatmap: { points, full_match_count: total, plotted_cells: points.length, note: "Demo points are fictional; live mode uses aggregated postcode districts." }, eureka };
-  }
-
-  function renderKpis(ins) {
-    const total = ins.total_count || 0;
-    const cat = ins.status?.categories || {};
-    const active = cat.Active || 0;
-    const risk = Object.keys(cat).filter(k => NEGATIVE_CATEGORIES.has(k)).reduce((s,k)=>s+cat[k],0);
-    const trend = ins.trend || [];
-    const latest = trend.length ? trend[trend.length-1] : {year:'—', count:0};
-    const topTown = (ins.rankings?.towns_by_opportunity || [])[0];
-    return `
-      <div class="rg-grid rg-kpis">
-        <div class="rg-cardbox"><div class="rg-kpi-label">Total market</div><div class="rg-kpi-value">${fmt(total)}</div><div class="rg-kpi-note">Full matching universe</div></div>
-        <div class="rg-cardbox"><div class="rg-kpi-label">Active health</div><div class="rg-kpi-value">${pct(active,total)}%</div><div class="rg-kpi-note">Active status share</div></div>
-        <div class="rg-cardbox"><div class="rg-kpi-label">Stress signal</div><div class="rg-kpi-value">${pct(risk,total)}%</div><div class="rg-kpi-note">At-risk/insolvency/liquidation</div></div>
-        <div class="rg-cardbox"><div class="rg-kpi-label">Latest year</div><div class="rg-kpi-value">${fmt(latest.count)}</div><div class="rg-kpi-note">Incorporated in ${latest.year}</div></div>
-        <div class="rg-cardbox"><div class="rg-kpi-label">Best pocket</div><div class="rg-kpi-value">${escapeHtml(topTown ? topTown.town : '—')}</div><div class="rg-kpi-note">By opportunity score</div></div>
-      </div>`;
-  }
-
-  function renderEureka(ins) {
-    const cards = ins.eureka || [];
-    return `<div class="rg-grid rg-eureka">${cards.map(c => `
-      <div class="rg-cardbox ${escapeHtml(c.sentiment)}"><div class="rg-eureka-title">${escapeHtml(c.title)}</div><div class="rg-eureka-value">${escapeHtml(c.value)}</div><div class="rg-eureka-note">${escapeHtml(c.note)}</div></div>
-    `).join('')}</div>`;
   }
 
   function renderBars(items, labelKey, valueKey, options = {}) {
@@ -363,113 +513,288 @@
   function renderTrendChart(trend) {
     trend = (trend || []).slice(-25);
     if (!trend.length) return `<div class="rg-empty">No incorporation dates available.</div>`;
-    const w = 760, h = 250, pad = 32, max = Math.max(1, ...trend.map(d => d.count));
-    const step = trend.length > 1 ? (w - pad*2) / (trend.length - 1) : 0;
-    const points = trend.map((d,i) => [pad + i*step, h-pad - (d.count/max)*(h-pad*2)]);
+    const w = 760, h = 270, padLeft = 48, padRight = 24, padTop = 24, padBottom = 38, max = Math.max(1, ...trend.map(d => d.count));
+    const chartW = w - padLeft - padRight, chartH = h - padTop - padBottom;
+    const step = trend.length > 1 ? chartW / (trend.length - 1) : 0;
+    const yFor = (count) => padTop + chartH - (count/max)*chartH;
+    const points = trend.map((d,i) => [padLeft + i*step, yFor(d.count)]);
     const path = points.map((p,i) => `${i?'L':'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+    const tickValues = [...new Set([max, Math.round(max * .75), Math.round(max * .5), Math.round(max * .25), 0])].sort((a,b)=>b-a);
+    const yAxis = tickValues.map(v => {
+      const y = yFor(v);
+      return `<g><line x1="${padLeft}" y1="${y}" x2="${w-padRight}" y2="${y}" stroke="#dce6ee" stroke-width="1"/><text x="${padLeft-9}" y="${y+3}" text-anchor="end" fill="#667789" font-size="10">${fmt(v)}</text></g>`;
+    }).join('');
     const bars = trend.map((d,i) => {
-      const x = pad + i*step - Math.max(4, step*.28)/2;
-      const bh = (d.count/max)*(h-pad*2);
-      return `<rect x="${x}" y="${h-pad-bh}" width="${Math.max(4, step*.28)}" height="${bh}" rx="3" fill="rgba(95,168,160,.35)"><title>${d.year}: ${d.count}</title></rect>`;
+      const barW = Math.max(5, Math.min(22, step*.32 || 14));
+      const x = padLeft + i*step - barW/2;
+      const bh = (d.count/max)*chartH;
+      return `<rect x="${x}" y="${padTop + chartH - bh}" width="${barW}" height="${bh}" rx="3" fill="rgba(95,168,160,.38)"><title>${d.year}: ${d.count}</title></rect>`;
     }).join('');
-    const labels = trend.filter((_,i)=> i===0 || i===trend.length-1 || i%5===0).map((d,i) => {
-      const idx = trend.indexOf(d), x = pad + idx*step;
-      return `<text x="${x}" y="${h-8}" text-anchor="middle" fill="#9AA5B5" font-size="10">${d.year}</text>`;
+    const yearFontSize = trend.length > 18 ? 8 : (trend.length > 12 ? 9 : 10);
+    const labels = trend.map((d, idx) => {
+      const x = padLeft + idx*step;
+      return `<text x="${x}" y="${h-11}" text-anchor="middle" fill="#7C8A9A" font-size="${yearFontSize}">${d.year}</text>`;
     }).join('');
-    return `<svg class="rg-chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Incorporation trend chart"><line x1="${pad}" y1="${h-pad}" x2="${w-pad}" y2="${h-pad}" stroke="#334154"/>${bars}<path d="${path}" fill="none" stroke="#C99A4B" stroke-width="3" vector-effect="non-scaling-stroke"/>${points.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#F0EADC"><title>${trend[i].year}: ${trend[i].count}</title></circle>`).join('')}${labels}</svg>`;
+    return `<svg class="rg-chart" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="Incorporation trend chart"><rect x="${padLeft}" y="${padTop}" width="${chartW}" height="${chartH}" fill="rgba(255,255,255,.38)" rx="8"/>${yAxis}<line x1="${padLeft}" y1="${padTop + chartH}" x2="${w-padRight}" y2="${padTop + chartH}" stroke="#334154"/>${bars}<path d="${path}" fill="none" stroke="#C99A4B" stroke-width="3" vector-effect="non-scaling-stroke"/>${points.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#F0EADC" stroke="#C99A4B" stroke-width="1"><title>${trend[i].year}: ${trend[i].count}</title></circle>`).join('')}${labels}<text x="12" y="${padTop + chartH/2}" transform="rotate(-90 12 ${padTop + chartH/2})" text-anchor="middle" fill="#667789" font-size="10">Companies</text></svg>`;
   }
 
   function renderTable(rows, type, limit = 10) {
     rows = (rows || []).slice(0, limit);
     if (!rows.length) return `<div class="rg-empty">No ranked rows yet.</div>`;
     const key = type === 'sector' ? 'sic_text' : 'town';
-    return `<table class="rg-table"><thead><tr><th>${type === 'sector' ? 'Sector / SIC text' : 'Town'}</th><th class="num">Count</th><th class="num">Recent</th><th class="num">Growth</th><th class="num">Risk</th><th class="num">Score</th></tr></thead><tbody>${rows.map(r => `
-      <tr><td>${escapeHtml(r[key])}</td><td class="num">${fmt(r.count)}</td><td class="num">${fmt(r.recent_count)}</td><td class="num">${r.growth_pct === null || r.growth_pct === undefined ? 'new' : `${r.growth_pct}%`}</td><td class="num">${r.risk_rate}%</td><td class="num">${r.opportunity_score}</td></tr>
+    const labelTip = type === 'sector' ? 'The main Companies House SIC description used to group similar businesses.' : 'The Companies House registered town used to group matching companies.';
+    const h = (label, tip) => `<span class="rg-th-help">${label}<span class="rg-info-dot" tabindex="0" data-tip="${escapeHtml(tip)}">i</span></span>`;
+    return `<table class="rg-table"><thead><tr><th>${h(type === 'sector' ? 'Sector / SIC text' : 'Town', labelTip)}</th><th class="num">${h('Count', 'How many matching companies are in this town or sector.')}</th><th class="num">${h('Recent %', 'recent_count divided by count, multiplied by 100. This shows what share of this market formed recently.')}</th><th class="num">${h('Growth', 'Recent companies compared with the previous time window. New means there were no companies in the previous window.')}</th><th class="num">${h('Risk', 'Risk companies divided by count, multiplied by 100. Risk includes at-risk, insolvency and liquidation statuses.')}</th><th class="num">${h('Score', 'Opportunity score uses four 0-100 inputs: recent share, active rate, growth score and risk rate. The weights are 40, 25, 15 and 20, and risk is subtracted.')}</th></tr></thead><tbody>${rows.map(r => `
+      <tr><td>${escapeHtml(r[key])}</td><td class="num">${fmt(r.count)}</td><td class="num">${r.recent_rate ?? pct(r.recent_count, r.count)}%</td><td class="num">${r.growth_pct === null || r.growth_pct === undefined ? 'new' : `${r.growth_pct}%`}</td><td class="num">${r.risk_rate}%</td><td class="num">${r.opportunity_score}</td></tr>
     `).join('')}</tbody></table>`;
+  }
+
+  function renderHealthMeter(statusRows, total) {
+    const max = Math.max(1, ...statusRows.map(r => r.count));
+    if (!statusRows.length) return `<div class="rg-empty">No status data yet.</div>`;
+    return `<div class="rg-health-meter">${statusRows.slice(0, 5).map(r => {
+      const meta = metaFor(r.name);
+      const tone = NEGATIVE_CATEGORIES.has(r.name) ? 'negative' : (r.name === 'Active - At Risk' ? 'warning' : '');
+      return `<div class="rg-meter-row"><span title="${escapeHtml(r.name)}">${escapeHtml(meta.chip || r.name)}</span><div class="rg-meter-track"><div class="rg-meter-fill ${tone}" style="width:${Math.max(3, (r.count / max) * 100)}%; background:${meta.color}"></div></div><span>${pct(r.count,total)}%</span></div>`;
+    }).join('')}</div>`;
+  }
+
+  function renderSectorChips(sectors) {
+    const rows = (sectors || []).slice(0, 7);
+    if (!rows.length) return `<div class="rg-empty">No sector data yet.</div>`;
+    const total = rows.reduce((sum, r) => sum + Number(r.count || 0), 0);
+    const max = Math.max(1, ...rows.map(r => Number(r.count || 0)));
+    return `<div class="rg-sector-viz">${rows.map(r => {
+      const label = String(r.sic_text || 'Unknown').replace(/^\d+\s*-\s*/, '');
+      const value = Number(r.count || 0);
+      const share = total ? Math.round((value / total) * 100) : 0;
+      return `<div class="rg-sector-row" title="${escapeHtml(r.sic_text)}"><div class="rg-sector-name">${escapeHtml(label)}</div><div class="rg-sector-track"><div class="rg-sector-fill" style="width:${Math.max(4, (value / max) * 100)}%"></div></div><div class="rg-sector-meta">${fmt(value)} · ${share}%</div></div>`;
+    }).join('')}</div>`;
+  }
+
+  function renderTownShortlist(towns) {
+    const rows = (towns || []).slice(0, 5);
+    if (!rows.length) return `<div class="rg-empty">No town ranking yet.</div>`;
+    return `<div class="rg-town-shortlist">${rows.map((r, i) => {
+      const recentRate = r.recent_rate ?? pct(r.recent_count, r.count);
+      const growth = r.growth_pct === null || r.growth_pct === undefined ? 'new local activity' : `${r.growth_pct}% recent growth`;
+      const reason = `${recentRate}% recently formed; ${growth}; ${r.active_rate}% active`;
+      return `<div class="rg-town-row"><div class="rg-town-rank">${i + 1}</div><div><div class="rg-town-name">${escapeHtml(r.town)}</div><div class="rg-town-reason">${escapeHtml(reason)}</div></div><div class="rg-town-score">${escapeHtml(r.opportunity_score)}</div></div>`;
+    }).join('')}</div>`;
+  }
+
+  function renderOverviewReport(ins) {
+    const total = ins.total_count || 0;
+    const cat = ins.status?.categories || {};
+    const active = cat.Active || 0;
+    const risk = Object.keys(cat).filter(k => NEGATIVE_CATEGORIES.has(k)).reduce((s,k)=>s+cat[k],0);
+    const activeRate = Number(pct(active, total));
+    const riskRate = Number(pct(risk, total));
+    const trend = ins.trend || [];
+    const latest = trend.length ? trend[trend.length - 1] : null;
+    const previous = trend.length > 1 ? trend[trend.length - 2] : null;
+    const topTown = (ins.rankings?.towns_by_opportunity || [])[0];
+    const topSector = (ins.sectors || [])[0];
+    const statusRows = Object.entries(cat).map(([name,count]) => ({ name, count })).sort((a,b)=>b.count-a.count);
+    const carefulTowns = (ins.towns || ins.rankings?.towns_by_opportunity || ins.rankings?.towns_by_risk || [])
+      .slice()
+      .sort((a,b) => Number(a.opportunity_score ?? 0) - Number(b.opportunity_score ?? 0));
+    const healthTone = riskRate >= 20 ? 'mixed' : (activeRate >= 85 ? 'healthy' : 'selective');
+    const activityText = latest && previous
+      ? (latest.count >= previous.count ? `New registrations are holding up, with ${latest.count} started in ${latest.year}.` : `New registrations eased in ${latest.year}, so check whether demand is cooling or just delayed.`)
+      : 'There is not enough yearly history yet to call the direction.';
+    const sectorName = topSector ? String(topSector.sic_text || '').replace(/^\d+\s*-\s*/, '') : 'the searched sector';
+    const townName = topTown ? topTown.town : 'No clear town yet';
+
+    return `
+      <div class="rg-report">
+        <section class="rg-report-hero">
+          <div>
+            <p class="rg-report-kicker">Overview brief</p>
+            <h3 class="rg-report-title">A ${healthTone} market with ${fmt(total)} matching companies</h3>
+            <p class="rg-report-copy">The strongest read is ${escapeHtml(townName)} for location focus and ${escapeHtml(sectorName)} as the most common business type. Use this page as a quick market read before moving into the map, trends or company list.</p>
+          </div>
+          <div class="rg-report-stats">
+            <div class="rg-stat-line"><span>Active</span><strong>${activeRate}%</strong></div>
+            <div class="rg-stat-line"><span>At risk</span><strong>${riskRate}%</strong></div>
+            <div class="rg-stat-line"><span>Latest year</span><strong>${latest ? fmt(latest.count) : '—'}</strong></div>
+          </div>
+        </section>
+
+        <div class="rg-insight-grid">
+          <div class="rg-insight-card ${riskRate >= 20 ? 'warning' : 'positive'}"><h3>Health</h3><span class="rg-insight-value">${riskRate < 10 ? 'Low risk' : (riskRate < 20 ? 'Watch list' : 'Higher risk')}</span><p>${fmt(active)} companies are active. ${fmt(risk)} are in an at-risk, insolvency or liquidation status.</p></div>
+          <div class="rg-insight-card ${latest && previous && latest.count < previous.count ? 'negative' : 'positive'}"><h3>Momentum</h3><span class="rg-insight-value">${latest ? latest.year : '—'}</span><p>${escapeHtml(activityText)}</p></div>
+          <div class="rg-insight-card positive"><h3>Focus</h3><span class="rg-insight-value">${escapeHtml(townName)}</span><p>This is the best first place to inspect because it combines activity, health and local density.</p></div>
+        </div>
+
+        <div class="rg-split">
+          <div class="rg-cardbox"><h3 class="rg-section-title">Market activity</h3><p class="rg-section-sub">Yearly incorporations show how much new company activity is appearing in the register.</p>${renderTrendChart(ins.trend)}</div>
+          <div class="rg-cardbox"><h3 class="rg-section-title">Health mix</h3><p class="rg-section-sub">Statuses are grouped into plain business-health categories.</p>${renderHealthMeter(statusRows, total)}</div>
+        </div>
+
+        <div class="rg-split">
+          <div class="rg-cardbox"><h3 class="rg-section-title">Business types</h3><p class="rg-section-sub">The main types of companies found in this search.</p>${renderSectorChips(ins.sectors || [])}</div>
+          <div class="rg-cardbox"><h3 class="rg-section-title">Where to look first</h3><p class="rg-section-sub">A short location list instead of a dense table. Higher score means a better first research target.</p>${renderTownShortlist(ins.rankings?.towns_by_opportunity || [])}</div>
+        </div>
+
+        <div class="rg-map-layout">
+          <div class="rg-map-card">
+            <div class="rg-map-tools">
+              <button type="button" class="rg-map-mode-btn active" data-heat-mode="count"><strong>Density</strong><span>Where companies cluster</span></button>
+              <button type="button" class="rg-map-mode-btn" data-heat-mode="recent_count"><strong>Recent formation</strong><span>Newer company activity</span></button>
+              <button type="button" class="rg-map-mode-btn" data-heat-mode="risk_count"><strong>Stress / risk</strong><span>Areas needing caution</span></button>
+              <button type="button" class="rg-map-dot-toggle" id="rg-heat-dots-toggle" aria-pressed="false"><strong>Area dots</strong><span>Show clickable points</span></button>
+            </div>
+            <div class="rg-map-legend" id="rg-map-legend">
+              <div class="rg-map-legend-title">Heat intensity</div>
+              <div class="rg-map-legend-scale" id="rg-map-legend-scale"></div>
+              <div class="rg-map-legend-row"><span>Low</span><span>High</span></div>
+            </div>
+            <div id="rg-heatmap"></div>
+          </div>
+          <div id="rg-heat-summary" class="rg-cardbox"><div class="rg-loading">Loading map summary...</div></div>
+        </div>
+
+        <div class="rg-split">
+          <div class="rg-cardbox"><h3 class="rg-section-title">Location opportunities</h3><p class="rg-section-sub">Places ranked by recent activity, health and useful local density.</p>${renderTable(ins.rankings?.towns_by_opportunity || [], 'town', 10)}</div>
+          <div class="rg-cardbox"><h3 class="rg-section-title">Locations to check carefully</h3><p class="rg-section-sub">Sorted by lowest score first. These places need more caution before acting.</p>${renderTable(carefulTowns, 'town', 10)}</div>
+        </div>
+
+        <div class="rg-split">
+          <div class="rg-cardbox"><h3 class="rg-section-title">Sector opportunities</h3><p class="rg-section-sub">Business types with stronger recent formation and healthier status mix.</p>${renderTable(ins.rankings?.sectors_by_opportunity || [], 'sector', 10)}</div>
+          <div class="rg-cardbox"><h3 class="rg-section-title">Sector stress</h3><p class="rg-section-sub">Business types where the status mix needs more care before acting.</p>${renderTable(ins.rankings?.sectors_by_risk || [], 'sector', 10)}</div>
+        </div>
+      </div>`;
   }
 
   function renderRadar() {
     const ins = state.insights;
-    if (!ins) { els.radar.innerHTML = `<div class="rg-loading">Building market radar…</div>`; return; }
-    const topSectors = (ins.sectors || []).slice(0,8);
-    const statusRows = Object.entries(ins.status?.categories || {}).map(([name,count]) => ({ name, count })).sort((a,b)=>b.count-a.count);
-    els.radar.innerHTML = `
-      ${renderEureka(ins)}
-      ${renderKpis(ins)}
-      <div class="rg-split">
-        <div class="rg-cardbox"><h3 class="rg-section-title">Formation pulse</h3><p class="rg-section-sub">New company formation by incorporation year — a registration-activity signal that can move before broader market reports catch up. Not proof of demand.</p>${renderTrendChart(ins.trend)}</div>
-        <div class="rg-cardbox"><h3 class="rg-section-title">Status mix</h3><p class="rg-section-sub">A fast health read for the searched market.</p>${renderBars(statusRows, 'name', 'count', { limit: 7, risk: true })}</div>
-      </div>
-      <div class="rg-split">
-        <div class="rg-cardbox"><h3 class="rg-section-title">Top sector language</h3><p class="rg-section-sub">Useful for keyword strategy, positioning and competitor clustering.</p>${renderBars(topSectors, 'sic_text', 'count', { limit: 8 })}</div>
-        <div class="rg-cardbox"><h3 class="rg-section-title">Aha lens</h3><p class="rg-section-sub">Look for places with rising incorporations but low stress. Look for sectors with high stress as possible consolidation, partnership or warning signals.</p>${renderTable(ins.rankings?.towns_by_opportunity || [], 'town', 6)}</div>
-      </div>
-    `;
+    if (state.loadingExplore) { els.radar.innerHTML = renderExploreProgress(); return; }
+    if (!state.hasSearched) { els.radar.innerHTML = renderExploreIdle(); return; }
+    if (!ins) { els.radar.innerHTML = `<div class="rg-loading">Building market report...</div>`; return; }
+    heatMap = null;
+    heatLayers = [];
+    els.radar.innerHTML = renderOverviewReport(ins);
+    els.heatSummary = root.querySelector("#rg-heat-summary");
+    els.heatModeButtons = root.querySelectorAll(".rg-map-mode-btn");
+    els.heatDotsToggle = root.querySelector("#rg-heat-dots-toggle");
+    els.heatModeButtons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.heatMode === state.heatMode);
+      btn.setAttribute('aria-pressed', String(btn.dataset.heatMode === state.heatMode));
+      btn.addEventListener('click', () => {
+        state.heatMode = btn.dataset.heatMode || 'count';
+        els.heatModeButtons.forEach(modeBtn => {
+          const active = modeBtn.dataset.heatMode === state.heatMode;
+          modeBtn.classList.toggle('active', active);
+          modeBtn.setAttribute('aria-pressed', String(active));
+        });
+        renderHeatMap();
+      });
+    });
+    if (els.heatDotsToggle) {
+      els.heatDotsToggle.classList.toggle('active', state.showMapDots);
+      els.heatDotsToggle.setAttribute('aria-pressed', String(state.showMapDots));
+      els.heatDotsToggle.querySelector('span').textContent = state.showMapDots ? 'Hide clickable points' : 'Show clickable points';
+      els.heatDotsToggle.addEventListener('click', () => {
+        state.showMapDots = !state.showMapDots;
+        els.heatDotsToggle.classList.toggle('active', state.showMapDots);
+        els.heatDotsToggle.setAttribute('aria-pressed', String(state.showMapDots));
+        els.heatDotsToggle.querySelector('span').textContent = state.showMapDots ? 'Hide clickable points' : 'Show clickable points';
+        renderHeatMap();
+      });
+    }
   }
+
+  const UK_MAP_BOUNDS = [[49.75, -8.65], [60.95, 1.85]];
 
   function initHeatMap() {
     if (heatMap) return;
-    heatMap = L.map(root.querySelector("#rg-heatmap"), { scrollWheelZoom: false }).setView([54.5, -3.2], 5.4);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "&copy; OpenStreetMap contributors", maxZoom: 18 }).addTo(heatMap);
+    const mapEl = root.querySelector("#rg-heatmap");
+    if (!mapEl) return;
+    heatMap = L.map(mapEl, { scrollWheelZoom: false, zoomSnap: 0.25, maxBounds: UK_MAP_BOUNDS, maxBoundsViscosity: 1 }).fitBounds(UK_MAP_BOUNDS, { padding: [10, 10] });
+    heatMap.setMinZoom(heatMap.getZoom());
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { attribution: "&copy; OpenStreetMap contributors &copy; CARTO", maxZoom: 18, noWrap: true, bounds: UK_MAP_BOUNDS }).addTo(heatMap);
   }
-  function clearHeatLayers() { heatLayers.forEach(l => heatMap.removeLayer(l)); heatLayers = []; }
+  function clearHeatLayers() { if (!heatMap) return; heatLayers.forEach(l => heatMap.removeLayer(l)); heatLayers = []; }
   function renderHeatMap() {
     initHeatMap();
+    if (!heatMap || !els.heatSummary) return;
     const ins = state.insights;
-    const mode = els.heatMode.value || 'count';
+    const mode = state.heatMode || 'count';
     clearHeatLayers();
     if (!ins || !ins.heatmap || !ins.heatmap.points.length) {
       els.heatSummary.innerHTML = `<h3 class="rg-section-title">Heatmap</h3><p class="rg-section-sub">No geocoded postcode districts yet. In live mode, the server geocodes representative postcodes and caches them.</p>`;
       return;
     }
     const points = ins.heatmap.points.filter(p => Number(p[mode] || 0) > 0);
-    const maxVal = Math.max(1, ...points.map(p => Number(p[mode] || 0)));
-    const color = mode === 'risk_count' ? '#C1574A' : (mode === 'recent_count' ? '#5FA8A0' : '#C99A4B');
+    if (!points.length) {
+      els.heatSummary.innerHTML = `<h3 class="rg-section-title">Map view</h3><p class="rg-section-sub">No postcode areas have a value for this map mode yet.</p>`;
+      return;
+    }
+    const values = points.map(p => Number(p[mode] || 0));
+    const maxVal = Math.max(1, ...values);
+    const minVal = Math.min(...values);
+    const valueRange = Math.max(0, maxVal - minVal);
+    const color = '#E2572F';
+    const modeLabel = mode === 'risk_count' ? 'Risk signal' : (mode === 'recent_count' ? 'Recent formation' : 'Market density');
+    const gradient = { 0.18: '#1D4F91', 0.38: '#008F8C', 0.62: '#F0B83F', 0.82: '#E2572F', 1: '#7A1236' };
+    const gradientCss = 'linear-gradient(90deg, #1D4F91, #008F8C, #F0B83F, #E2572F, #7A1236)';
+    const legend = root.querySelector("#rg-map-legend");
+    if (legend) {
+      const title = legend.querySelector(".rg-map-legend-title");
+      const scale = legend.querySelector("#rg-map-legend-scale");
+      if (title) title.textContent = `${modeLabel} heat`;
+      if (scale) scale.style.background = gradientCss;
+    }
+    const intensityFor = (value) => valueRange
+      ? 0.16 + Math.pow((value - minVal) / valueRange, 0.72) * 0.84
+      : 0.58;
+    const colorForIntensity = (intensity) => {
+      if (intensity >= 0.9) return gradient[1];
+      if (intensity >= 0.74) return gradient[0.86] || gradient[0.82];
+      if (intensity >= 0.5) return gradient[0.68] || gradient[0.62];
+      if (intensity >= 0.28) return gradient[0.42] || gradient[0.38];
+      return gradient[0.18];
+    };
     const bounds = [];
-    points.forEach(p => {
-      const val = Number(p[mode] || 0);
-      const radius = 6 + Math.sqrt(val / maxVal) * 38;
-      const marker = L.circleMarker([p.lat, p.lon], { radius, color, weight: 1, fillColor: color, fillOpacity: 0.25 + Math.min(.45, val/maxVal*.45) })
-        .addTo(heatMap)
-        .bindPopup(`<b>${escapeHtml(p.outcode)}</b><br>${mode.replace('_',' ')}: ${fmt(val)}<br>Total: ${fmt(p.count)}<br>Recent: ${fmt(p.recent_count)}<br>Risk: ${fmt(p.risk_count)}`);
-      heatLayers.push(marker); bounds.push([p.lat, p.lon]);
-    });
-    if (bounds.length) heatMap.fitBounds(bounds, { padding: [32,32], maxZoom: 12 });
+    if (L.heatLayer) {
+      const heatPoints = points.map(p => [p.lat, p.lon, intensityFor(Number(p[mode] || 0))]);
+      const heatLayer = L.heatLayer(heatPoints, { radius: 36, blur: 22, max: 1, minOpacity: 0.18, maxZoom: 12, gradient }).addTo(heatMap);
+      heatLayers.push(heatLayer);
+      if (state.showMapDots) {
+        points.forEach(p => {
+          const val = Number(p[mode] || 0);
+          const intensity = intensityFor(val);
+          const marker = L.circleMarker([p.lat, p.lon], { radius: 3 + intensity * 3, color: '#101827', weight: 1, opacity: 0.9, fillColor: colorForIntensity(intensity), fillOpacity: 0.5 + intensity * 0.38 })
+            .addTo(heatMap)
+            .bindPopup(`<b>${escapeHtml(p.outcode)}</b><br>${modeLabel}: ${fmt(val)}<br>Total: ${fmt(p.count)}<br>Recent: ${fmt(p.recent_count)}<br>Risk: ${fmt(p.risk_count)}`);
+          heatLayers.push(marker); bounds.push([p.lat, p.lon]);
+        });
+      }
+    } else {
+      points.forEach(p => {
+        const val = Number(p[mode] || 0);
+        const intensity = intensityFor(val);
+        const radius = 7 + Math.sqrt(intensity) * 34;
+        const marker = L.circleMarker([p.lat, p.lon], { radius, color: colorForIntensity(intensity), weight: 2, opacity: 0.9, fillColor: colorForIntensity(intensity), fillOpacity: 0.2 + intensity * 0.52 })
+          .addTo(heatMap)
+          .bindPopup(`<b>${escapeHtml(p.outcode)}</b><br>${modeLabel}: ${fmt(val)}<br>Total: ${fmt(p.count)}<br>Recent: ${fmt(p.recent_count)}<br>Risk: ${fmt(p.risk_count)}`);
+        heatLayers.push(marker); bounds.push([p.lat, p.lon]);
+      });
+    }
+    heatMap.fitBounds(UK_MAP_BOUNDS, { padding: [10, 10] });
     const top = points.slice().sort((a,b)=>Number(b[mode]||0)-Number(a[mode]||0)).slice(0,8).map(p => ({ label: p.outcode, value: p[mode], count: p.count }));
-    els.heatSummary.innerHTML = `<h3 class="rg-section-title">Full-result heatmap</h3><p class="rg-section-sub">${escapeHtml(ins.heatmap.note || '')}</p>
-      <div class="rg-kpi-label">Full matches behind map</div><div class="rg-kpi-value">${fmt(ins.heatmap.full_match_count)}</div><div class="rg-kpi-note">Plotted postcode cells: ${fmt(ins.heatmap.plotted_cells)}</div>
+    const topCell = top[0];
+    els.heatSummary.innerHTML = `<h3 class="rg-section-title">Map view</h3><p class="rg-section-sub">${escapeHtml(modeLabel)} by postcode area. ${escapeHtml(ins.heatmap.note || '')}</p>
+      <div class="rg-map-summary-grid">
+        <div class="rg-map-stat"><span>Matches</span><strong>${fmt(ins.heatmap.full_match_count)}</strong></div>
+        <div class="rg-map-stat"><span>Areas</span><strong>${fmt(ins.heatmap.plotted_cells)}</strong></div>
+        <div class="rg-map-stat"><span>Top area</span><strong>${escapeHtml(topCell ? topCell.label : '—')}</strong></div>
+        <div class="rg-map-stat"><span>Top signal</span><strong>${fmt(topCell ? topCell.value : 0)}</strong></div>
+      </div>
       <div style="margin-top:16px">${renderBars(top, 'label', 'value', { limit: 8, risk: mode==='risk_count' })}</div>
-      <p class="rg-footnote">Tip: switch between Density, Recent formation and Stress. Big circles are not individual pins; they are aggregated postcode districts, so a 109k-result market remains readable.</p>`;
+      <p class="rg-footnote">Switch the heatmap between density, recent formation and risk. Heat is aggregated by postcode area.${state.showMapDots ? ' Area dots are clickable references.' : ' Turn on area dots if you want clickable postcode references.'}</p>`;
     setTimeout(() => heatMap.invalidateSize(), 50);
-  }
-
-  function renderTrends() {
-    const ins = state.insights;
-    if (!ins) { els.trends.innerHTML = `<div class="rg-loading">Building trend view…</div>`; return; }
-    els.trends.innerHTML = `
-      <div class="rg-split">
-        <div class="rg-cardbox"><h3 class="rg-section-title">Time trend in this market</h3><p class="rg-section-sub">Comparison window: recent ${escapeHtml(ins.comparison_window?.recent || '')} vs previous ${escapeHtml(ins.comparison_window?.previous || '')}.${ins.comparison_window?.latest_year_in_trend_is_ytd ? ' Current-year bar is year-to-date and is not used for annual opportunity scoring.' : ''}</p>${renderTrendChart(ins.trend)}</div>
-        <div class="rg-cardbox"><h3 class="rg-section-title">Fastest opportunity towns</h3><p class="rg-section-sub">High recent formation + healthy status mix + useful density.</p>${renderTable(ins.rankings?.towns_by_opportunity || [], 'town', 10)}</div>
-      </div>
-      <div class="rg-split">
-        <div class="rg-cardbox"><h3 class="rg-section-title">Positive sector development</h3><p class="rg-section-sub">Sectors with stronger recent formation signals.</p>${renderTable(ins.rankings?.sectors_by_opportunity || [], 'sector', 10)}</div>
-        <div class="rg-cardbox"><h3 class="rg-section-title">Negative development / stress</h3><p class="rg-section-sub">Higher risk ratio means more companies here are in an insolvency-related status. That's a registry signal, not a confirmed cause — financing pressure, filing delays, sector-wide cost shocks, or other company-specific issues could each be behind it.</p>${renderTable(ins.rankings?.towns_by_risk || [], 'town', 10)}</div>
-      </div>`;
-  }
-
-  function renderOpportunity() {
-    const ins = state.insights;
-    if (!ins) { els.opportunity.innerHTML = `<div class="rg-loading">Scoring opportunities…</div>`; return; }
-    els.opportunity.innerHTML = `
-      <div class="rg-split">
-        <div class="rg-cardbox"><h3 class="rg-section-title">Where to attack</h3><p class="rg-section-sub">Locations ranked by the opportunity score. Treat this as a shortlist generator for deeper research.</p>${renderTable(ins.rankings?.towns_by_opportunity || [], 'town', 15)}</div>
-        <div class="rg-cardbox"><h3 class="rg-section-title">Where to be careful</h3><p class="rg-section-sub">High stress can reveal weak economics, oversupply, or a chance to buy/partner if you understand the cause.</p>${renderTable(ins.rankings?.towns_by_risk || [], 'town', 15)}</div>
-      </div>
-      <div class="rg-split">
-        <div class="rg-cardbox"><h3 class="rg-section-title">Sector opportunities</h3>${renderTable(ins.rankings?.sectors_by_opportunity || [], 'sector', 15)}</div>
-        <div class="rg-cardbox"><h3 class="rg-section-title">Sector stress</h3>${renderTable(ins.rankings?.sectors_by_risk || [], 'sector', 15)}</div>
-      </div>
-      <p class="rg-footnote">Score formula is intentionally transparent: recent formation, active-rate and low-risk signals lift the score; saturation and status stress reduce it. Change the formula in companies_house_market_server.py for your own thesis.</p>`;
   }
 
   function showDetail(item) {
@@ -498,47 +823,187 @@
     if (more) more.addEventListener('click', () => doSearch(false));
   }
 
-  async function loadInsights() {
-    state.insights = isLive ? await fetchLiveInsights() : demoInsights();
-    renderRadar(); renderTrends(); renderOpportunity(); renderHeatMap();
+  async function loadInsights(preloadedInsights) {
+    state.insights = preloadedInsights !== undefined ? preloadedInsights : (isLive ? await fetchLiveInsights() : demoInsights());
+    state.loadingExplore = false;
+    renderRadar();
+    renderHeatMap();
   }
   async function doSearch(reset) {
-    if (reset) { state.offset = 0; state.items = []; selectedIndex = null; els.detail.innerHTML = `<h3>Select a company</h3><p class="rg-detail-row">Use this tab to inspect the rows behind the market signal.</p>`; }
+    const runId = reset ? ++searchRunId : searchRunId;
+    if (reset) { state.hasSearched = true; state.offset = 0; state.items = []; selectedIndex = null; els.detail.innerHTML = `<h3>Select a company</h3><p class="rg-detail-row">Use this tab to inspect the rows behind the market signal.</p>`; }
     setLiveBadge();
+    let insightsData;
     if (isLive) {
-      const data = await fetchLivePage(reset);
+      const [data, insights] = reset
+        ? await Promise.all([fetchLivePage(reset), fetchLiveInsights()])
+        : [await fetchLivePage(reset), undefined];
+      if (runId !== searchRunId) return;
+      insightsData = insights;
       state.total = data.total_count || 0;
       state.items = reset ? (data.results || []) : state.items.concat(data.results || []);
       state.offset = state.items.length;
     } else {
       const filtered = applyDemoFilters();
+      if (runId !== searchRunId) return;
       state.total = filtered.length;
       state.items = filtered;
+      insightsData = reset ? demoInsights() : undefined;
     }
     renderList();
-    if (reset) await loadInsights();
+    if (reset) await loadInsights(insightsData);
     els.export.href = isLive ? ("/api/export.csv?" + paramsToQuery({ limit: 50000 })) : "#";
   }
 
   function debounce(fn, ms) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); }; }
-  const debouncedSearch = debounce(() => doSearch(true), 220);
-  els.q.addEventListener('input', debouncedSearch);
-  els.place.addEventListener('input', debouncedSearch);
-  els.statusGroup.addEventListener('click', (e) => {
-    const btn = e.target.closest('.rg-status-btn'); if (!btn) return;
-    categoryFilter = btn.dataset.category;
-    els.statusGroup.querySelectorAll('.rg-status-btn').forEach(b => b.classList.toggle('active', b === btn));
-    doSearch(true);
-  });
-  els.heatMode.addEventListener('change', renderHeatMap);
-  root.querySelectorAll('.rg-tab').forEach(tab => tab.addEventListener('click', () => {
-    root.querySelectorAll('.rg-tab').forEach(t => t.classList.toggle('active', t === tab));
-    root.querySelectorAll('.rg-panel').forEach(p => p.classList.remove('active'));
-    root.querySelector(`#rg-panel-${tab.dataset.tab}`).classList.add('active');
-    if (tab.dataset.tab === 'heatmap') setTimeout(() => { initHeatMap(); heatMap.invalidateSize(); renderHeatMap(); }, 60);
-  }));
-  els.export.addEventListener('click', (e) => { if (!isLive) { e.preventDefault(); alert('CSV export is available when the Flask server is running with live data.'); } });
+  const debouncedSearch = debounce(() => { setExploreLoading(); doSearch(true); }, 450);
 
-  checkLiveSource().then(() => doSearch(true));
+  function renderExploreProgress() {
+    return `<div class="rg-progress-card" role="status" aria-live="polite">
+      <h3 class="rg-progress-title">Loading market results</h3>
+      <p class="rg-progress-copy">Fetching matching companies, preparing the Explore report and building the map view.</p>
+      <div class="rg-progress-track" aria-hidden="true"><div class="rg-progress-fill"></div></div>
+      <div class="rg-progress-steps">
+        <div class="rg-progress-step">Search</div>
+        <div class="rg-progress-step">Analyse</div>
+        <div class="rg-progress-step">Build report</div>
+      </div>
+    </div>`;
+  }
+
+  function renderExploreIdle() {
+    return `<div class="rg-progress-card">
+      <h3 class="rg-progress-title">Explore is ready</h3>
+      <p class="rg-progress-copy">Choose your filters and run a search. The market report, heatmap and company results will appear here after the search finishes.</p>
+    </div>`;
+  }
+
+  function setExploreLoading() {
+    state.hasSearched = true;
+    state.loadingExplore = true;
+    state.insights = null;
+    heatMap = null;
+    heatLayers = [];
+    if (els.radar) els.radar.innerHTML = renderExploreProgress();
+  }
+
+  function activateMenu(menuName) {
+    els.mainMenu.forEach(btn => btn.classList.toggle('active', btn.dataset.menu === menuName));
+    els.menuPanels.forEach(panel => panel.classList.toggle('active', panel.id === `rg-menu-${menuName}`));
+  }
+
+  function showMenu(menuName) {
+    activateMenu(menuName);
+    if (menuName === 'explore') {
+      renderRadar();
+      setTimeout(() => {
+        initHeatMap();
+        if (heatMap) heatMap.invalidateSize();
+        renderHeatMap();
+      }, 60);
+    }
+  }
+
+  // Status cards: All status visually selects every category and sends no status restriction.
+  if (els.statusGroup) {
+    const statusButtons = Array.from(els.statusGroup.querySelectorAll('.rg-status-btn'));
+    const allButton = statusButtons.find(btn => btn.dataset.category === '');
+    const statusOptionButtons = statusButtons.filter(btn => btn.dataset.category);
+    function setStatusCards(selected, useAll = false) {
+      const selectedSet = new Set(selected);
+      const allSelected = useAll || !selected.length || selected.length === statusOptionButtons.length;
+      categoryFilter = allSelected ? [] : selected;
+      statusButtons.forEach(btn => {
+        const isAll = btn.dataset.category === '';
+        const isActive = allSelected || (!isAll && selectedSet.has(btn.dataset.category));
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
+      });
+    }
+    statusButtons.forEach(btn => btn.addEventListener('click', () => {
+      if (btn.dataset.category === '') {
+        setStatusCards(statusOptionButtons.map(card => card.dataset.category), true);
+      } else {
+        const allIsActive = allButton?.classList.contains('active');
+        const selected = allIsActive
+          ? [btn.dataset.category]
+          : statusOptionButtons
+              .filter(card => card === btn ? !card.classList.contains('active') : card.classList.contains('active'))
+              .map(card => card.dataset.category);
+        setStatusCards(selected);
+      }
+    }));
+    setStatusCards(statusOptionButtons.map(card => card.dataset.category), true);
+  }
+  if (els.searchBtn) els.searchBtn.addEventListener('click', async () => {
+    activateMenu('explore');
+    setExploreLoading();
+    await doSearch(true);
+  });
+  // Set up town autocomplete
+  const uniqueTowns = [...new Set(DEMO_DATA.map(d => d.town).sort())];
+  // Set up Explore page town filter with autocomplete
+  if (els.explorePlace && els.exploreAutocomplete) {
+    function updateClearPlace() {
+      if (!els.clearPlace) return;
+      els.clearPlace.hidden = !els.explorePlace.value.trim();
+    }
+    function showPlaceSuggestions(value) {
+      const filtered = value.trim().length > 0
+        ? uniqueTowns.filter(town => town.toLowerCase().includes(value.toLowerCase()))
+        : [];
+      if (filtered.length > 0) {
+        els.exploreAutocomplete.innerHTML = filtered.map(town =>
+          `<div class="rg-place-option">${escapeHtml(town)}</div>`
+        ).join('');
+        els.exploreAutocomplete.classList.add('active');
+      } else {
+        els.exploreAutocomplete.classList.remove('active');
+      }
+      updateClearPlace();
+    }
+    els.explorePlace.addEventListener('input', (e) => {
+      showPlaceSuggestions(e.target.value);
+      debouncedSearch();
+    });
+    els.explorePlace.addEventListener('focus', (e) => {
+      showPlaceSuggestions(e.target.value);
+    });
+    els.exploreAutocomplete.addEventListener('click', (e) => {
+      if (e.target.classList.contains('rg-place-option')) {
+        els.explorePlace.value = e.target.textContent;
+        els.exploreAutocomplete.classList.remove('active');
+        updateClearPlace();
+        setExploreLoading();
+        doSearch(true);
+      }
+    });
+    if (els.clearPlace) {
+      els.clearPlace.addEventListener('click', () => {
+        els.explorePlace.value = '';
+        els.exploreAutocomplete.classList.remove('active');
+        updateClearPlace();
+        setExploreLoading();
+        doSearch(true);
+        els.explorePlace.focus();
+      });
+    }
+    document.addEventListener('click', (e) => {
+      if (!els.explorePlace.contains(e.target) && !els.exploreAutocomplete.contains(e.target) && !els.clearPlace?.contains(e.target)) {
+        els.exploreAutocomplete.classList.remove('active');
+      }
+    });
+    updateClearPlace();
+  }
+  els.export.addEventListener('click', (e) => { if (!isLive) { e.preventDefault(); alert('CSV export is available when the Flask server is running with live data.'); } });
+  els.mainMenu.forEach(btn => btn.addEventListener('click', () => {
+    showMenu(btn.dataset.menu);
+  }));
+
+  checkLiveSource().then(() => {
+    if (els.radar) els.radar.innerHTML = renderExploreIdle();
+    if (els.count) els.count.textContent = '';
+    if (els.export) els.export.href = '#';
+  });
 })();
 </script>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Opportunity Score — Formula Explorer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:      #0F1318;
+    --panel:    #181E26;
+    --panel-2:  #1F2733;
+    --border:   #2C3748;
+    --muted:    #6B7788;
+    --paper:    #E8E2D5;
+    --brass:    #C99A4B;
+    --teal:     #5FA8A0;
+    --rust:     #C1574A;
+    --violet:   #8B7EC8;
+    --mono:     "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --serif:    Georgia, "Palatino Linotype", serif;
+    --sans:     -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  }
+
+  body { background: var(--ink); color: var(--paper); font-family: var(--sans); font-size: 14px; line-height: 1.6; }
+
+  header { padding: 36px 32px 20px; border-bottom: 1px solid var(--border); }
+  header .eyebrow { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; color: var(--brass); text-transform: uppercase; margin-bottom: 8px; }
+  header h1 { font-family: var(--serif); font-size: 26px; color: var(--paper); margin-bottom: 4px; }
+  header p { color: var(--muted); font-size: 13px; max-width: 700px; }
+
+  .grid { display: grid; grid-template-columns: 420px 1fr; gap: 0; min-height: calc(100vh - 120px); }
+  .left  { border-right: 1px solid var(--border); padding: 24px; overflow-y: auto; }
+  .right { padding: 24px; overflow-y: auto; }
+
+  section { margin-bottom: 28px; }
+  section h2 { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; color: var(--brass); text-transform: uppercase; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+  /* Formula mode toggle */
+  .mode-row { display: flex; gap: 6px; margin-bottom: 20px; }
+  .mode-btn { flex: 1; padding: 9px 10px; font-family: var(--mono); font-size: 11px; border: 1px solid var(--border); background: transparent; color: var(--muted); border-radius: 6px; cursor: pointer; text-align: center; }
+  .mode-btn.active { background: var(--panel-2); color: var(--paper); border-color: var(--brass); }
+
+  /* Sliders */
+  .slider-group { display: flex; flex-direction: column; gap: 14px; }
+  .slider-row { display: flex; flex-direction: column; gap: 5px; }
+  .slider-label { display: flex; justify-content: space-between; align-items: baseline; }
+  .slider-name { font-size: 12.5px; color: var(--paper); }
+  .slider-val { font-family: var(--mono); font-size: 12px; color: var(--brass); min-width: 36px; text-align: right; }
+  .slider-note { font-size: 11px; color: var(--muted); }
+  input[type=range] { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 4px; background: var(--border); outline: none; cursor: pointer; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: var(--brass); cursor: pointer; }
+  input[type=range]:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* Weight budget bar */
+  .budget-bar { margin: 14px 0 18px; }
+  .budget-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; display: flex; }
+  .budget-seg { height: 100%; transition: width .2s; }
+  .budget-row { display: flex; justify-content: space-between; margin-top: 5px; }
+  .budget-lbl { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .budget-sum { font-family: var(--mono); font-size: 10px; }
+
+  /* Warning */
+  .warn { padding: 8px 10px; border-radius: 6px; font-size: 11.5px; margin: 10px 0; display: none; }
+  .warn.show { display: block; }
+  .warn.bad { background: rgba(193,87,74,.12); color: var(--rust); border: 1px solid var(--rust); }
+  .warn.ok  { background: rgba(95,168,160,.10); color: var(--teal); border: 1px solid var(--teal); }
+
+  /* Formula display */
+  .formula-box { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; font-family: var(--mono); font-size: 11.5px; color: var(--paper); line-height: 2; margin-bottom: 18px; }
+  .formula-box .hi-b { color: var(--brass); }
+  .formula-box .hi-t { color: var(--teal); }
+  .formula-box .hi-r { color: var(--rust); }
+  .formula-box .hi-v { color: var(--violet); }
+
+  /* Rankings */
+  .rank-list { display: flex; flex-direction: column; gap: 10px; }
+  .rank-card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: start; border-left: 3px solid transparent; transition: border-color .2s; }
+  .rank-card.rank-1 { border-left-color: var(--brass); }
+  .rank-card.rank-2 { border-left-color: var(--teal); }
+  .rank-card.rank-3 { border-left-color: var(--violet); }
+  .rank-num { font-family: var(--mono); font-size: 11px; color: var(--muted); padding-top: 2px; }
+  .rank-name { font-size: 13.5px; font-weight: 600; color: var(--paper); }
+  .rank-terms { font-family: var(--mono); font-size: 10.5px; color: var(--muted); margin-top: 4px; }
+  .rank-score { font-family: var(--mono); font-size: 20px; color: var(--brass); font-weight: bold; text-align: right; }
+  .rank-badge { font-family: var(--mono); font-size: 9.5px; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); text-align: right; margin-top: 4px; }
+
+  /* Axis problem callout */
+  .problem-box { background: rgba(193,87,74,.08); border: 1px solid var(--rust); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; }
+  .problem-box h3 { font-family: var(--mono); font-size: 11px; letter-spacing:.1em; text-transform: uppercase; color: var(--rust); margin-bottom: 8px; }
+  .problem-box p { font-size: 12.5px; color: var(--paper); line-height: 1.65; }
+  .problem-box .evidence { font-family: var(--mono); font-size: 11px; background: var(--panel); border-radius: 4px; padding: 8px 10px; margin-top: 10px; color: var(--brass); }
+
+  .insight-box { background: rgba(95,168,160,.08); border: 1px solid var(--teal); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; }
+  .insight-box h3 { font-family: var(--mono); font-size: 11px; letter-spacing:.1em; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+  .insight-box p { font-size: 12.5px; color: var(--paper); line-height: 1.65; }
+
+  /* Approach tabs */
+  .approach-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+  .approach-tab { font-family: var(--mono); font-size: 11px; padding: 9px 14px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; }
+  .approach-tab.active { color: var(--paper); border-bottom-color: var(--brass); }
+  .approach-panel { display: none; font-size: 12.5px; color: var(--paper); line-height: 1.7; }
+  .approach-panel.active { display: block; }
+  .approach-panel ol { padding-left: 18px; }
+  .approach-panel li { margin-bottom: 8px; }
+  .approach-panel code { font-family: var(--mono); font-size: 11px; background: var(--panel-2); padding: 1px 5px; border-radius: 3px; color: var(--brass); }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: 1fr; }
+    .left { border-right: none; border-bottom: 1px solid var(--border); }
+  }
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">Companies House Market Dashboard</p>
+  <h1>Opportunity Score — Formula Explorer</h1>
+  <p>Why the original constants were problematic, and how the normalized opportunity score works with tunable 0-100 weights.</p>
+</header>
+
+<div class="grid">
+<!-- LEFT: controls -->
+<div class="left">
+
+  <section>
+    <h2>Formula mode</h2>
+    <div class="mode-row">
+      <button class="mode-btn" data-mode="current">Original comparison</button>
+      <button class="mode-btn active" data-mode="normalized">Normalized current</button>
+    </div>
+    <div id="formula-display" class="formula-box"></div>
+    <div id="warn" class="warn"></div>
+  </section>
+
+  <section id="current-controls" style="display:none;">
+    <h2>Original formula — tune constants</h2>
+    <div class="slider-group">
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name">recent_count multiplier</span><span class="slider-val" id="val-w-recent">1.8</span></div>
+        <input type="range" id="sl-w-recent" min="0.1" max="5" step="0.1" value="1.8" />
+        <div class="slider-note">Scales raw incorporation count — linear, unbounded</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name">active_rate multiplier</span><span class="slider-val" id="val-w-active-c">0.35</span></div>
+        <input type="range" id="sl-w-active-c" min="0.01" max="2" step="0.01" value="0.35" />
+        <div class="slider-note">% scale (0–100), so max contribution = multiplier × 100</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name">risk_rate multiplier</span><span class="slider-val" id="val-w-risk-c">0.9</span></div>
+        <input type="range" id="sl-w-risk-c" min="0.01" max="3" step="0.01" value="0.9" />
+        <div class="slider-note">% scale (0–100), subtracted</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name">density_penalty k (log₁₀ × k)</span><span class="slider-val" id="val-k">3.5</span></div>
+        <input type="range" id="sl-k" min="0.5" max="60" step="0.5" value="3.5" />
+        <div class="slider-note">This is the 3.5 constant. See why it barely matters →</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name">growth cap (+ve)</span><span class="slider-val" id="val-gcap">30</span></div>
+        <input type="range" id="sl-gcap" min="5" max="100" step="5" value="30" />
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name">growth cap (−ve)</span><span class="slider-val" id="val-gcap-n">−20</span></div>
+        <input type="range" id="sl-gcap-n" min="5" max="80" step="5" value="20" />
+      </div>
+    </div>
+  </section>
+
+  <section id="normalized-controls">
+    <h2>Normalized formula — tune weights</h2>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">All inputs are on a 0–100 scale before weighting, so weights are directly comparable. They should sum to 100 for a clean interpretation.</p>
+
+    <div id="budget-bar" class="budget-bar">
+      <div class="budget-track">
+        <div class="budget-seg" id="bseg-pace"   style="background:var(--teal)"></div>
+        <div class="budget-seg" id="bseg-active" style="background:var(--brass)"></div>
+        <div class="budget-seg" id="bseg-growth" style="background:var(--violet)"></div>
+        <div class="budget-seg" id="bseg-risk"   style="background:var(--rust)"></div>
+      </div>
+      <div class="budget-row">
+        <span class="budget-lbl" style="color:var(--teal)">pace</span>
+        <span class="budget-lbl" style="color:var(--brass)">active</span>
+        <span class="budget-lbl" style="color:var(--violet)">growth</span>
+        <span class="budget-lbl" style="color:var(--rust)">risk</span>
+        <span class="budget-sum" id="budget-sum">100</span>
+      </div>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name" style="color:var(--teal)">w_pace — formation rate weight</span><span class="slider-val" id="val-wpace">40</span></div>
+        <input type="range" id="sl-wpace" min="0" max="80" step="5" value="40" />
+        <div class="slider-note">What % of matching companies formed in the recent window</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name" style="color:var(--brass)">w_active — health weight</span><span class="slider-val" id="val-wactive">25</span></div>
+        <input type="range" id="sl-wactive" min="0" max="60" step="5" value="25" />
+        <div class="slider-note">% of companies in "Active" status</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name" style="color:var(--violet)">w_growth — acceleration weight</span><span class="slider-val" id="val-wgrowth">15</span></div>
+        <input type="range" id="sl-wgrowth" min="0" max="50" step="5" value="15" />
+        <div class="slider-note">Is recent pace faster than the prior window?</div>
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span class="slider-name" style="color:var(--rust)">w_risk — stress penalty weight</span><span class="slider-val" id="val-wrisk">20</span></div>
+        <input type="range" id="sl-wrisk" min="0" max="60" step="5" value="20" />
+        <div class="slider-note">% of companies in insolvency/risk status</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- RIGHT: analysis + live rankings -->
+<div class="right">
+
+  <section>
+    <h2>The core problem with the original formula</h2>
+    <div class="problem-box">
+      <h3>Dimensional mismatch — big cities always win</h3>
+      <p><code>recent_count × 1.8</code> is an <strong>absolute count</strong>, growing without bound as a market gets larger. The <code>log10(count) × 3.5</code> density penalty grows logarithmically — far too slowly to offset it. The result: London (800 recent incorporations) gets a <code>recent</code> bonus of <strong>1,440 points</strong>, while the density penalty is only <strong>12.9 points</strong>. Changing 3.5 to anything short of ~600 makes no meaningful difference.</p>
+      <div class="evidence" id="dim-evidence">Computing…</div>
+    </div>
+    <div class="insight-box">
+      <h3>Fix: use formation rate, not formation count</h3>
+      <p>Replace <code>recent_count × 1.8</code> with <code>(recent_count / total_count) × 100</code> — what <em>fraction</em> of the market formed recently. Now a town where 80% of matching companies are new beats one where only 16% are new, regardless of which town is bigger. All four inputs become 0–100 percentages, weights become directly comparable and must sum to 100 to stay interpretable.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>How weights should be chosen — three approaches</h2>
+    <div class="approach-tabs">
+      <button class="approach-tab active" data-ap="hand">Hand-picked</button>
+      <button class="approach-tab" data-ap="archetype">Archetype calibration</button>
+      <button class="approach-tab" data-ap="fitted">Outcome-fitted</button>
+    </div>
+    <div class="approach-panel active" id="ap-hand">
+      <p><strong>What the original code did.</strong> Weights were chosen so the formula "felt reasonable" on a few mental examples. This produced plausible-looking output but had no guarantee the ranking reflected reality and was dominated by the dimensional problem above.</p>
+      <p style="margin-top:8px;">Changing 3.5 → 6 on the current formula shifts London's score from 1,457 to 1,450. It's noise. The bug is structural, not a constant.</p>
+    </div>
+    <div class="approach-panel" id="ap-archetype">
+      <p><strong>What this feature uses now.</strong> Define 4–6 archetypes whose correct ranking you'd agree on, then set weights until the formula produces that order. No labeled data needed.</p>
+      <ol>
+        <li>Write down the archetypes (e.g. "TinyBoom should beat London even though London is larger")</li>
+        <li>Use the sliders below to tune until the ranking matches your judgment</li>
+        <li>Record the weights and document <em>why</em> the ordering is correct</li>
+        <li>Re-run whenever market context changes</li>
+      </ol>
+      <p style="margin-top:8px;color:var(--muted)">Limitation: the "correct" ordering is still a judgment call. It won't generalize to archetypes you haven't considered.</p>
+    </div>
+    <div class="approach-panel" id="ap-fitted">
+      <p><strong>The principled long-run goal.</strong> Collect 50–100 labeled examples — areas you assessed as high/low opportunity and later verified. Fit weights by regression.</p>
+      <ol>
+        <li>Use the dashboard over 6–12 months, flagging areas with a 0–10 opportunity rating</li>
+        <li>Follow up: did those areas show formation growth / competitor entries / customer traction?</li>
+        <li>Feed the outcome labels + the five normalized features into a Ridge regression (regularized to avoid overfitting with a small sample)</li>
+        <li>The fitted coefficients become your weights — <code>code: sklearn.linear_model.Ridge(alpha=1.0).fit(X_normalized, y_labels)</code></li>
+        <li>Re-fit every 12–18 months or when market context shifts</li>
+      </ol>
+      <p style="margin-top:8px;color:var(--muted)">Limitation: requires real labeled outcomes, which take time to collect. "Opportunity" also depends on your time horizon.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Live rankings — tune the sliders to see the order change</h2>
+    <div id="rankings" class="rank-list"></div>
+  </section>
+
+</div>
+</div>
+
+<script>
+const ARCHETYPES = [
+  { name: "London (huge, avg growth)",       count:5000, ar:92, rr:4,  rec:800, prev:750, desc:"Big city, absolute count dominates current formula" },
+  { name: "Manchester (large, declining)",   count:1500, ar:88, rr:7,  rec:200, prev:260, desc:"Large but slowing — should rank mid-table" },
+  { name: "Bristol (medium, fast growth)",   count:300,  ar:94, rr:3,  rec:90,  prev:55,  desc:"30% of companies formed recently, healthy" },
+  { name: "TinyBoom (10 co, all new)",       count:10,   ar:100,rr:0,  rec:8,   prev:1,   desc:"80% recent, zero risk — should rank #1 on a fair formula" },
+  { name: "Stress pocket (30% risk)",        count:100,  ar:65, rr:30, rec:15,  prev:18,  desc:"High insolvency rate — should rank last" },
+  { name: "Steady small (50 co, healthy)",   count:50,   ar:95, rr:2,  rec:8,   prev:9,   desc:"Healthy but no growth signal" },
+];
+
+let mode = "normalized";
+
+function scoreCurrent(c, ar, rr, rec, prev, params) {
+  const {wRec, wAct, wRisk, k, gcap, gcapN} = params;
+  const gp = prev === 0 ? 0 : (rec-prev)/prev*100;
+  const gb = prev === 0 && rec > 0 ? 20 : Math.max(-gcapN, Math.min(gcap, gp/4));
+  const dp = Math.log10(Math.max(c,1)) * k;
+  return +( (rec*wRec) + (ar*wAct) - (rr*wRisk) + gb - dp ).toFixed(1);
+}
+
+function scoreNormalized(c, ar, rr, rec, prev, params) {
+  const {wPace, wActive, wGrowth, wRisk} = params;
+  const pace = c > 0 ? rec/c*100 : 0;
+  let gc;
+  if (prev === 0) { gc = rec > 0 ? 100 : 0; }
+  else { const gp = (rec-prev)/prev*100; gc = Math.max(0, Math.min(100, (gp+50)*(100/150))); }
+  const raw = (wPace*pace/100) + (wActive*ar/100) - (wRisk*rr/100) + (wGrowth*gc/100);
+  return +raw.toFixed(1);
+}
+
+function getCurrentParams() {
+  return {
+    wRec:   +document.getElementById("sl-w-recent").value,
+    wAct:   +document.getElementById("sl-w-active-c").value,
+    wRisk:  +document.getElementById("sl-w-risk-c").value,
+    k:      +document.getElementById("sl-k").value,
+    gcap:   +document.getElementById("sl-gcap").value,
+    gcapN:  +document.getElementById("sl-gcap-n").value,
+  };
+}
+
+function getNormParams() {
+  return {
+    wPace:   +document.getElementById("sl-wpace").value,
+    wActive: +document.getElementById("sl-wactive").value,
+    wGrowth: +document.getElementById("sl-wgrowth").value,
+    wRisk:   +document.getElementById("sl-wrisk").value,
+  };
+}
+
+function renderBudget(p) {
+  const total = p.wPace + p.wActive + p.wGrowth + p.wRisk;
+  document.getElementById("budget-sum").textContent = "Σ=" + total;
+  document.getElementById("budget-sum").style.color = Math.abs(total-100) < 1 ? "var(--teal)" : "var(--rust)";
+  ["pace","active","growth","risk"].forEach((k, i) => {
+    const vals = [p.wPace, p.wActive, p.wGrowth, p.wRisk];
+    document.getElementById("bseg-"+k).style.width = (vals[i]/total*100)+"%";
+  });
+  const warn = document.getElementById("warn");
+  if (Math.abs(total-100) > 1) {
+    warn.className = "warn show bad";
+    warn.textContent = `Weights sum to ${total}. For interpretable scores they should sum to 100.`;
+  } else {
+    warn.className = "warn show ok";
+    warn.textContent = `Weights sum to ${total} ✓`;
+  }
+}
+
+function renderFormula() {
+  const el = document.getElementById("formula-display");
+  if (mode === "current") {
+    const p = getCurrentParams();
+    el.innerHTML = `<span class="hi-t">recent_count</span> × <span class="hi-b">${p.wRec}</span>
++ <span class="hi-t">active_rate</span> × <span class="hi-b">${p.wAct}</span>
+− <span class="hi-r">risk_rate</span> × <span class="hi-b">${p.wRisk}</span>
++ growth_bonus  <span style="color:var(--muted)">[−${p.gcapN}, +${p.gcap}]</span>
+− log₁₀(count) × <span class="hi-b">${p.k}</span>`;
+  } else {
+    const p = getNormParams();
+    el.innerHTML = `(<span class="hi-t">recent_rate%</span>÷100 × <span class="hi-b">${p.wPace}</span>
++ <span class="hi-b">active_rate%</span>÷100 × <span class="hi-b">${p.wActive}</span>
+− <span class="hi-r">risk_rate%</span>÷100 × <span class="hi-b">${p.wRisk}</span>
++ <span class="hi-v">growth_contrib</span>÷100 × <span class="hi-b">${p.wGrowth}</span>)`;
+  }
+}
+
+function renderDimEvidence() {
+  const p = getCurrentParams();
+  const londonRecent = 800 * p.wRec;
+  const londonDensity = Math.log10(5000) * p.k;
+  const ratio = (londonRecent / londonDensity).toFixed(0);
+  document.getElementById("dim-evidence").innerHTML =
+    `London recent bonus:   800 × ${p.wRec} = ${londonRecent.toFixed(1)} pts\n` +
+    `London density penalty: log₁₀(5000) × ${p.k} = ${londonDensity.toFixed(1)} pts\n` +
+    `Ratio: ${ratio}× → k would need to be ~${(londonRecent/Math.log10(5000)).toFixed(0)} to neutralize`;
+}
+
+function renderRankings() {
+  const ranked = ARCHETYPES.map(a => {
+    const score = mode === "current"
+      ? scoreCurrent(a.count, a.ar, a.rr, a.rec, a.prev, getCurrentParams())
+      : scoreNormalized(a.count, a.ar, a.rr, a.rec, a.prev, getNormParams());
+
+    let terms = "";
+    if (mode === "current") {
+      const p = getCurrentParams();
+      const gp = a.prev===0?0:(a.rec-a.prev)/a.prev*100;
+      const gb = a.prev===0&&a.rec>0?20:Math.max(-p.gcapN,Math.min(p.gcap,gp/4));
+      const dp = Math.log10(Math.max(a.count,1))*p.k;
+      terms = `rec=${+(a.rec*p.wRec).toFixed(1)}  act=${+(a.ar*p.wAct).toFixed(1)}  risk=-${+(a.rr*p.wRisk).toFixed(1)}  gb=+${gb.toFixed(1)}  dp=-${dp.toFixed(1)}`;
+    } else {
+      const p = getNormParams();
+      const pace = a.count>0?a.rec/a.count*100:0;
+      let gc = a.prev===0?(a.rec>0?100:0):Math.max(0,Math.min(100,((a.rec-a.prev)/a.prev*100+50)*(100/150)));
+      terms = `pace=${pace.toFixed(0)}%  active=${a.ar}%  risk=${a.rr}%  growth=${gc.toFixed(0)}%`;
+    }
+    return { ...a, score, terms };
+  }).sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
+
+  document.getElementById("rankings").innerHTML = ranked.map((a,i) => `
+    <div class="rank-card rank-${i+1}">
+      <div class="rank-num">#${i+1}</div>
+      <div>
+        <div class="rank-name">${a.name}</div>
+        <div class="rank-terms">${a.terms}</div>
+        <div class="rank-terms" style="color:var(--muted);margin-top:3px;">${a.desc}</div>
+      </div>
+      <div>
+        <div class="rank-score">${a.score}</div>
+        <div class="rank-badge">${a.count.toLocaleString()} co.</div>
+      </div>
+    </div>`).join("");
+}
+
+function update() {
+  renderFormula();
+  renderRankings();
+  if (mode === "current") { renderDimEvidence(); }
+  if (mode === "normalized") { renderBudget(getNormParams()); }
+}
+
+// Mode toggle
+document.querySelectorAll(".mode-btn").forEach(btn => btn.addEventListener("click", () => {
+  mode = btn.dataset.mode;
+  document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("active", b===btn));
+  document.getElementById("current-controls").style.display = mode==="current" ? "" : "none";
+  document.getElementById("normalized-controls").style.display = mode==="normalized" ? "" : "none";
+  document.getElementById("warn").className = "warn";
+  update();
+}));
+
+// Approach tabs
+document.querySelectorAll(".approach-tab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".approach-tab").forEach(x => x.classList.toggle("active", x===t));
+  document.querySelectorAll(".approach-panel").forEach(p => p.classList.toggle("active", p.id==="ap-"+t.dataset.ap));
+}));
+
+// Wire all sliders
+const sliders = [
+  ["sl-w-recent","val-w-recent"],["sl-w-active-c","val-w-active-c"],
+  ["sl-w-risk-c","val-w-risk-c"],["sl-k","val-k"],
+  ["sl-gcap","val-gcap"],
+  ["sl-gcap-n","val-gcap-n","−"],
+  ["sl-wpace","val-wpace"],["sl-wactive","val-wactive"],
+  ["sl-wgrowth","val-wgrowth"],["sl-wrisk","val-wrisk"],
+];
+sliders.forEach(([sid, vid, prefix=""]) => {
+  const sl = document.getElementById(sid);
+  const vl = document.getElementById(vid);
+  sl.addEventListener("input", () => { vl.textContent = prefix + sl.value; update(); });
+});
+
+update();
+</script>
+</body>
+</html>
