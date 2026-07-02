@@ -173,6 +173,11 @@
   .rg-table th { text-align: left; color: var(--muted); font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .04em; border-bottom: 1px solid #e7edf3; padding: 8px 6px; }
   .rg-table td { border-bottom: 1px solid #eef3f8; padding: 9px 6px; vertical-align: top; color: var(--ink); }
   .rg-table td.num, .rg-table th.num { text-align: right; font-family: var(--font-mono); }
+  .rg-th-help { position: relative; display: inline-flex; align-items: center; gap: 4px; }
+  .rg-info-dot { width: 15px; height: 15px; display: inline-grid; place-items: center; border-radius: 999px; border: 1px solid #b7c6d6; color: #496477; background: #f8fbfd; font-family: var(--font-mono); font-size: 10px; font-weight: 900; cursor: help; }
+  .rg-info-dot::after { content: attr(data-tip); position: absolute; z-index: 900; left: 0; top: calc(100% + 8px); width: 240px; padding: 9px 10px; border-radius: 10px; background: #14213d; color: #ffffff; box-shadow: 0 14px 30px rgba(20,33,61,.22); font-family: var(--font-body); font-size: 11.5px; line-height: 1.45; letter-spacing: 0; text-transform: none; text-align: left; opacity: 0; pointer-events: none; transform: translateY(-3px); transition: opacity .15s ease, transform .15s ease; }
+  .rg-table th.num .rg-info-dot::after { left: auto; right: 0; }
+  .rg-info-dot:hover::after, .rg-info-dot:focus-visible::after { opacity: 1; transform: translateY(0); }
   .rg-map-layout { display: grid; grid-template-columns: 1fr 340px; gap: 14px; min-height: 640px; }
   .rg-map-card { position: relative; min-height: 640px; border: 1px solid #24384d; border-radius: 18px; overflow: hidden; background: #14213d; box-shadow: 0 14px 32px rgba(20,33,61,.09); }
   #rg-heatmap { height: 100%; min-height: 640px; }
@@ -183,6 +188,11 @@
   .rg-map-mode-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,.14); }
   .rg-map-mode-btn.active { background: linear-gradient(135deg, #f0b83f, #e2572f); color: #111827; border-color: rgba(255,255,255,.7); box-shadow: 0 8px 22px rgba(226,87,47,.34); }
   .rg-map-mode-btn.active strong, .rg-map-mode-btn.active span { color: #111827; }
+  .rg-map-dot-toggle { min-width: 126px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: #e8f1f7; cursor: pointer; font-family: var(--font-body); text-align: left; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+  .rg-map-dot-toggle strong { display: block; font-size: 12.5px; font-weight: 900; color: #ffffff; }
+  .rg-map-dot-toggle span { display: block; margin-top: 2px; font-size: 10.5px; color: #b9c8d8; font-weight: 700; }
+  .rg-map-dot-toggle:hover { transform: translateY(-1px); background: rgba(255,255,255,.14); }
+  .rg-map-dot-toggle.active { background: linear-gradient(135deg, #1d4f91, #008f8c); border-color: rgba(255,255,255,.7); box-shadow: 0 8px 22px rgba(0,143,140,.32); }
   .rg-map-legend { position: absolute; z-index: 450; left: 14px; bottom: 14px; display: grid; gap: 7px; min-width: 190px; padding: 12px; border-radius: 14px; border: 1px solid rgba(223,231,239,.9); background: rgba(255,255,255,.94); box-shadow: 0 12px 28px rgba(20,33,61,.12); }
   .rg-map-legend-title { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 800; }
   .rg-map-legend-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; color: var(--ink); font-size: 11.5px; font-weight: 700; }
@@ -373,14 +383,14 @@
     q: root.querySelector("#rg-q"), export: root.querySelector("#rg-export"),
     explorePlace: root.querySelector("#rg-explore-place"), exploreAutocomplete: root.querySelector("#rg-explore-place-autocomplete"), clearPlace: root.querySelector("#rg-clear-place"),
     statusGroup: root.querySelector("#rg-status-group"), count: root.querySelector("#rg-count"),
-    list: root.querySelector("#rg-list"), detail: root.querySelector("#rg-detail"), heatSummary: root.querySelector("#rg-heat-summary"), heatModeButtons: root.querySelectorAll(".rg-map-mode-btn"),
+    list: root.querySelector("#rg-list"), detail: root.querySelector("#rg-detail"), heatSummary: root.querySelector("#rg-heat-summary"), heatModeButtons: root.querySelectorAll(".rg-map-mode-btn"), heatDotsToggle: root.querySelector("#rg-heat-dots-toggle"),
     radar: root.querySelector("#rg-panel-explore"),
     mainMenu: root.querySelectorAll(".rg-menu-btn"), menuPanels: root.querySelectorAll(".rg-menu-panel"), searchBtn: root.querySelector("#rg-search-btn")
   };
 
   let isLive = false, categoryFilter = [], selectedIndex = null;
   const PAGE_SIZE = 200;
-  const state = { items: [], total: 0, offset: 0, insights: null, hasSearched: false, loadingExplore: false, heatMode: 'count' };
+  const state = { items: [], total: 0, offset: 0, insights: null, hasSearched: false, loadingExplore: false, heatMode: 'count', showMapDots: false };
   let heatMap = null, heatLayers = [];
   let searchRunId = 0;
 
@@ -446,6 +456,12 @@
     const trend = years.map(([year, rows]) => ({ year: Number(year), count: rows.length }));
     const maxYear = trend.length ? trend[trend.length - 1].year : new Date().getFullYear();
     const recentStart = maxYear - 1, prevStart = maxYear - 3, prevEnd = maxYear - 2;
+    const scoreWeights = { recentRate: 40, activeRate: 25, growth: 15, riskRate: 20 };
+    function growthScore(recent, previous) {
+      if (!previous) return recent > 0 ? 100 : 0;
+      const growthPct = ((recent - previous) / previous) * 100;
+      return Math.max(0, Math.min(100, (growthPct + 50) * (100 / 150)));
+    }
     function groupStats(map, labelName) {
       return [...map.entries()].map(([label, rows]) => {
         const count = rows.length;
@@ -455,9 +471,10 @@
         const previous = rows.filter(r => r.incorporation_year >= prevStart && r.incorporation_year <= prevEnd).length;
         const growth = previous ? Number((((recent - previous) / previous) * 100).toFixed(1)) : null;
         const activeRate = Number(pct(active, count)), riskRate = Number(pct(risk, count));
-        const growthBonus = previous === 0 && recent > 0 ? 20 : Math.max(-20, Math.min(30, (growth || 0) / 4));
-        const score = Number((recent * 1.8 + activeRate * .35 - riskRate * .9 + growthBonus - Math.log10(Math.max(count,1))*3.5).toFixed(1));
-        return { [labelName]: label, count, active_count: active, risk_count: risk, recent_count: recent, previous_count: previous, growth_pct: growth, active_rate: activeRate, risk_rate: riskRate, opportunity_score: score };
+        const recentRate = Number(pct(recent, count));
+        const growthContribution = Number(growthScore(recent, previous).toFixed(1));
+        const score = Number(((recentRate * scoreWeights.recentRate + activeRate * scoreWeights.activeRate + growthContribution * scoreWeights.growth - riskRate * scoreWeights.riskRate) / 100).toFixed(1));
+        return { [labelName]: label, count, active_count: active, risk_count: risk, recent_count: recent, recent_rate: recentRate, previous_count: previous, growth_pct: growth, growth_score: growthContribution, active_rate: activeRate, risk_rate: riskRate, opportunity_score: score };
       }).sort((a,b) => b.count - a.count);
     }
     const towns = groupStats(groupBy(items, i => i.town), "town");
@@ -525,8 +542,10 @@
     rows = (rows || []).slice(0, limit);
     if (!rows.length) return `<div class="rg-empty">No ranked rows yet.</div>`;
     const key = type === 'sector' ? 'sic_text' : 'town';
-    return `<table class="rg-table"><thead><tr><th>${type === 'sector' ? 'Sector / SIC text' : 'Town'}</th><th class="num">Count</th><th class="num">Recent</th><th class="num">Growth</th><th class="num">Risk</th><th class="num">Score</th></tr></thead><tbody>${rows.map(r => `
-      <tr><td>${escapeHtml(r[key])}</td><td class="num">${fmt(r.count)}</td><td class="num">${fmt(r.recent_count)}</td><td class="num">${r.growth_pct === null || r.growth_pct === undefined ? 'new' : `${r.growth_pct}%`}</td><td class="num">${r.risk_rate}%</td><td class="num">${r.opportunity_score}</td></tr>
+    const labelTip = type === 'sector' ? 'The main Companies House SIC description used to group similar businesses.' : 'The Companies House registered town used to group matching companies.';
+    const h = (label, tip) => `<span class="rg-th-help">${label}<span class="rg-info-dot" tabindex="0" data-tip="${escapeHtml(tip)}">i</span></span>`;
+    return `<table class="rg-table"><thead><tr><th>${h(type === 'sector' ? 'Sector / SIC text' : 'Town', labelTip)}</th><th class="num">${h('Count', 'How many matching companies are in this town or sector.')}</th><th class="num">${h('Recent %', 'recent_count divided by count, multiplied by 100. This shows what share of this market formed recently.')}</th><th class="num">${h('Growth', 'Recent companies compared with the previous time window. New means there were no companies in the previous window.')}</th><th class="num">${h('Risk', 'Risk companies divided by count, multiplied by 100. Risk includes at-risk, insolvency and liquidation statuses.')}</th><th class="num">${h('Score', 'Opportunity score uses four 0-100 inputs: recent share, active rate, growth score and risk rate. The weights are 40, 25, 15 and 20, and risk is subtracted.')}</th></tr></thead><tbody>${rows.map(r => `
+      <tr><td>${escapeHtml(r[key])}</td><td class="num">${fmt(r.count)}</td><td class="num">${r.recent_rate ?? pct(r.recent_count, r.count)}%</td><td class="num">${r.growth_pct === null || r.growth_pct === undefined ? 'new' : `${r.growth_pct}%`}</td><td class="num">${r.risk_rate}%</td><td class="num">${r.opportunity_score}</td></tr>
     `).join('')}</tbody></table>`;
   }
 
@@ -557,8 +576,9 @@
     const rows = (towns || []).slice(0, 5);
     if (!rows.length) return `<div class="rg-empty">No town ranking yet.</div>`;
     return `<div class="rg-town-shortlist">${rows.map((r, i) => {
+      const recentRate = r.recent_rate ?? pct(r.recent_count, r.count);
       const growth = r.growth_pct === null || r.growth_pct === undefined ? 'new local activity' : `${r.growth_pct}% recent growth`;
-      const reason = `${growth}; ${r.active_rate}% active`;
+      const reason = `${recentRate}% recently formed; ${growth}; ${r.active_rate}% active`;
       return `<div class="rg-town-row"><div class="rg-town-rank">${i + 1}</div><div><div class="rg-town-name">${escapeHtml(r.town)}</div><div class="rg-town-reason">${escapeHtml(reason)}</div></div><div class="rg-town-score">${escapeHtml(r.opportunity_score)}</div></div>`;
     }).join('')}</div>`;
   }
@@ -623,6 +643,7 @@
               <button type="button" class="rg-map-mode-btn active" data-heat-mode="count"><strong>Density</strong><span>Where companies cluster</span></button>
               <button type="button" class="rg-map-mode-btn" data-heat-mode="recent_count"><strong>Recent formation</strong><span>Newer company activity</span></button>
               <button type="button" class="rg-map-mode-btn" data-heat-mode="risk_count"><strong>Stress / risk</strong><span>Areas needing caution</span></button>
+              <button type="button" class="rg-map-dot-toggle" id="rg-heat-dots-toggle" aria-pressed="false"><strong>Area dots</strong><span>Show clickable points</span></button>
             </div>
             <div class="rg-map-legend" id="rg-map-legend">
               <div class="rg-map-legend-title">Heat intensity</div>
@@ -656,6 +677,7 @@
     els.radar.innerHTML = renderOverviewReport(ins);
     els.heatSummary = root.querySelector("#rg-heat-summary");
     els.heatModeButtons = root.querySelectorAll(".rg-map-mode-btn");
+    els.heatDotsToggle = root.querySelector("#rg-heat-dots-toggle");
     els.heatModeButtons.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.heatMode === state.heatMode);
       btn.setAttribute('aria-pressed', String(btn.dataset.heatMode === state.heatMode));
@@ -669,6 +691,18 @@
         renderHeatMap();
       });
     });
+    if (els.heatDotsToggle) {
+      els.heatDotsToggle.classList.toggle('active', state.showMapDots);
+      els.heatDotsToggle.setAttribute('aria-pressed', String(state.showMapDots));
+      els.heatDotsToggle.querySelector('span').textContent = state.showMapDots ? 'Hide clickable points' : 'Show clickable points';
+      els.heatDotsToggle.addEventListener('click', () => {
+        state.showMapDots = !state.showMapDots;
+        els.heatDotsToggle.classList.toggle('active', state.showMapDots);
+        els.heatDotsToggle.setAttribute('aria-pressed', String(state.showMapDots));
+        els.heatDotsToggle.querySelector('span').textContent = state.showMapDots ? 'Hide clickable points' : 'Show clickable points';
+        renderHeatMap();
+      });
+    }
   }
 
   const UK_MAP_BOUNDS = [[49.75, -8.65], [60.95, 1.85]];
@@ -727,14 +761,16 @@
       const heatPoints = points.map(p => [p.lat, p.lon, intensityFor(Number(p[mode] || 0))]);
       const heatLayer = L.heatLayer(heatPoints, { radius: 36, blur: 22, max: 1, minOpacity: 0.18, maxZoom: 12, gradient }).addTo(heatMap);
       heatLayers.push(heatLayer);
-      points.forEach(p => {
-        const val = Number(p[mode] || 0);
-        const intensity = intensityFor(val);
-        const marker = L.circleMarker([p.lat, p.lon], { radius: 3 + intensity * 3, color: '#101827', weight: 1, opacity: 0.9, fillColor: colorForIntensity(intensity), fillOpacity: 0.5 + intensity * 0.38 })
-          .addTo(heatMap)
-          .bindPopup(`<b>${escapeHtml(p.outcode)}</b><br>${modeLabel}: ${fmt(val)}<br>Total: ${fmt(p.count)}<br>Recent: ${fmt(p.recent_count)}<br>Risk: ${fmt(p.risk_count)}`);
-        heatLayers.push(marker); bounds.push([p.lat, p.lon]);
-      });
+      if (state.showMapDots) {
+        points.forEach(p => {
+          const val = Number(p[mode] || 0);
+          const intensity = intensityFor(val);
+          const marker = L.circleMarker([p.lat, p.lon], { radius: 3 + intensity * 3, color: '#101827', weight: 1, opacity: 0.9, fillColor: colorForIntensity(intensity), fillOpacity: 0.5 + intensity * 0.38 })
+            .addTo(heatMap)
+            .bindPopup(`<b>${escapeHtml(p.outcode)}</b><br>${modeLabel}: ${fmt(val)}<br>Total: ${fmt(p.count)}<br>Recent: ${fmt(p.recent_count)}<br>Risk: ${fmt(p.risk_count)}`);
+          heatLayers.push(marker); bounds.push([p.lat, p.lon]);
+        });
+      }
     } else {
       points.forEach(p => {
         const val = Number(p[mode] || 0);
@@ -757,7 +793,7 @@
         <div class="rg-map-stat"><span>Top signal</span><strong>${fmt(topCell ? topCell.value : 0)}</strong></div>
       </div>
       <div style="margin-top:16px">${renderBars(top, 'label', 'value', { limit: 8, risk: mode==='risk_count' })}</div>
-      <p class="rg-footnote">Switch the heatmap between density, recent formation and risk. Heat is aggregated by postcode area; small points are clickable area references.</p>`;
+      <p class="rg-footnote">Switch the heatmap between density, recent formation and risk. Heat is aggregated by postcode area.${state.showMapDots ? ' Area dots are clickable references.' : ' Turn on area dots if you want clickable postcode references.'}</p>`;
     setTimeout(() => heatMap.invalidateSize(), 50);
   }
 
