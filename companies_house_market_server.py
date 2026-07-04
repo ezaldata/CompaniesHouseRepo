@@ -249,6 +249,7 @@ def build_filters() -> tuple[str, list[Any], dict[str, str]]:
     """Create a parameterized WHERE clause from request args."""
     keyword = request.args.get("q", "").strip()
     place = request.args.get("place", "").strip()
+    business_type = request.args.get("business_type", "").strip()
     category = request.args.get("category", "").strip()
 
     clauses: list[str] = []
@@ -270,15 +271,24 @@ def build_filters() -> tuple[str, list[Any], dict[str, str]]:
         )""")
         params.extend([place, place, place])
 
+    if business_type:
+        sic_clause = []
+        for i in range(1, 5):
+            sic_clause.append(f"lower(coalesce(\"SICCode.SicText_{i}\", '')) LIKE '%' || lower(?) || '%'")
+            params.append(business_type)
+        clauses.append("(" + " OR ".join(sic_clause) + ")")
+
     if category:
-        raw_labels = STATUS_CATEGORIES.get(category)
+        selected_categories = [part.strip() for part in category.split("|") if part.strip()]
+        raw_label_groups = [STATUS_CATEGORIES.get(part, []) for part in selected_categories]
+        raw_labels = [label for group in raw_label_groups for label in group]
         if raw_labels:
             placeholders = ", ".join(["?"] * len(raw_labels))
             clauses.append(f'"CompanyStatus" IN ({placeholders})')
             params.extend(raw_labels)
 
     where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
-    return where, params, {"q": keyword, "place": place, "category": category}
+    return where, params, {"q": keyword, "place": place, "business_type": business_type, "category": category}
 
 
 def _category_case_sql(alias: str = '"CompanyStatus"') -> str:
@@ -684,8 +694,6 @@ def api_insights():
             "intensity": round((int(count or 0) / max_heat_count), 4),
         })
 
-    con.close()
-
     # Rankings use a higher floor than the general breakdown: a town/sector
     # clearing min_group (default 3) is enough to be listed at all, but
     # being crowned an "opportunity" or "stress pocket" needs a sample big
@@ -702,6 +710,34 @@ def api_insights():
 
     display_towns = sorted(towns, key=lambda x: (x["count"], x["town"]), reverse=True)[:80]
     display_sectors = sorted(sectors, key=lambda x: (x["count"], x["sic_text"]), reverse=True)[:80]
+    matrix_sector_names = {row["sic_text"] for row in display_sectors[:12]}
+    sector_status_rows = con.execute(f"""
+        SELECT sic_text, status_category, count(*) AS count
+        FROM (
+          SELECT
+            {PRIMARY_SIC_EXPR} AS sic_text,
+            {category_sql} AS status_category
+          FROM companies {where}
+        )
+        WHERE sic_text != 'Unclassified'
+        GROUP BY 1, 2
+        ORDER BY 1, 2
+    """, params).fetchall()
+    health_matrix_rows: dict[str, dict[str, Any]] = {
+        sector["sic_text"]: {
+            "sic_text": sector["sic_text"],
+            "total": sector["count"],
+            "active_rate": sector["active_rate"],
+            "risk_rate": sector["risk_rate"],
+            "categories": {},
+        }
+        for sector in display_sectors[:12]
+    }
+    for sic_text, status_category, count in sector_status_rows:
+        if sic_text in matrix_sector_names:
+            health_matrix_rows[sic_text]["categories"][status_category] = int(count or 0)
+
+    con.close()
 
     return jsonify({
         "filters": filters,
@@ -721,6 +757,10 @@ def api_insights():
         "trend": trend,
         "towns": display_towns,
         "sectors": display_sectors,
+        "health_matrix": {
+            "columns": ["Active", "Active - At Risk", "Insolvency - Voluntary Arrangement", "Insolvency - Administration/Receivership", "Liquidation", "Other"],
+            "rows": list(health_matrix_rows.values()),
+        },
         "rankings": {
             "towns_by_opportunity": towns_by_opportunity[:20],
             "towns_by_risk": towns_by_risk[:20],

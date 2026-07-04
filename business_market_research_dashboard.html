@@ -51,7 +51,7 @@
   .rg-banner b { color: var(--ink); }
   .rg-stamp-badge { flex: none; font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; border: 1px solid var(--teal); color: var(--teal); border-radius: 999px; padding: 2px 8px; transform: rotate(-3deg); white-space: nowrap; background: rgba(255,255,255,.82); }
   .rg-stamp-badge.live { border-color: var(--brass); color: var(--brass); }
-  .rg-controls { display: grid; grid-template-columns: minmax(150px, 230px) auto minmax(0, 1fr); gap: 10px; padding: 18px 28px 10px; align-items: start; }
+  .rg-controls { display: grid; grid-template-columns: minmax(150px, 230px) auto minmax(200px, 280px) auto minmax(220px, 320px) auto; gap: 10px; padding: 18px 28px 10px; align-items: start; }
   .rg-place-wrapper { position: relative; }
   .rg-place-autocomplete { position: absolute; top: calc(100% + 10px); left: 0; right: 0; background: #fff; border: 1px solid rgba(47,159,150,.22); box-shadow: 0 18px 40px rgba(20,33,61,.14); border-radius: 16px; max-height: 240px; overflow-y: auto; z-index: 1100; display: none; }
   .rg-place-autocomplete.active { display: block; }
@@ -69,6 +69,8 @@
   .rg-clear-place:hover { background: #fff5f5; border-color: rgba(201,78,86,.38); }
   .rg-controls input, .rg-controls select { background: #ffffff; border: 1px solid var(--hairline); color: var(--ink); font-family: var(--font-body); font-size: 13.5px; padding: 10px 12px; border-radius: 12px; min-height: 42px; box-shadow: 0 4px 10px rgba(20,33,61,.04); }
   .rg-keyword-input { width: 100%; max-width: 230px; }
+  .rg-place-search-input { width: 100%; min-width: 0; border-color: rgba(47,159,150,.28) !important; }
+  .rg-business-type-input { width: 100%; min-width: 0; border-color: rgba(210,141,59,.3) !important; }
   .rg-controls input::placeholder { color: #94a3b8; }
   .rg-controls input:focus, .rg-controls select:focus, .rg-explore-filter input:focus, .rg-status-btn:focus-visible, .rg-tab:focus-visible, .rg-card:focus-visible, .rg-loadmore:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
   .rg-status-panel { grid-column: 1 / -1; display: grid; gap: 10px; margin-top: 4px; padding: 13px; border: 1px solid rgba(47,159,150,.18); border-radius: 18px; background: linear-gradient(135deg, #ffffff, #f7fbff); box-shadow: 0 10px 24px rgba(20,33,61,.05); }
@@ -89,6 +91,8 @@
   .rg-status-btn.active small { color: #25384b; padding-right: 58px; }
   .rg-export { color: #ffffff; text-decoration: none; font-family: var(--font-body); font-size: 11.5px; border: 1px solid transparent; border-radius: 999px; padding: 10px 12px; text-align: center; background: linear-gradient(135deg, #3868f6, #4ba8ff); box-shadow: 0 8px 16px rgba(56,104,246,.18); font-weight: 700; }
   .rg-search-btn { padding: 10px 14px; border-radius: 10px; border: none; background: linear-gradient(135deg, #4ba8ff, #2f9f96); color: #fff; font-weight: 700; font-size: 13.5px; cursor: pointer; font-family: var(--font-body); box-shadow: 0 6px 14px rgba(56,104,246,.16); transition: all .2s ease; }
+  .rg-place-search-btn { background: linear-gradient(135deg, #d28d3b, #2f9f96); }
+  .rg-business-type-btn { background: linear-gradient(135deg, #3868f6, #d28d3b); }
   .rg-search-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(56,104,246,.24); }
   .rg-search-btn:active { transform: translateY(0); box-shadow: 0 4px 12px rgba(56,104,246,.16); }
   .rg-menu-nav { display: flex; gap: 10px; padding: 18px 28px 0; flex-wrap: wrap; }
@@ -173,6 +177,11 @@
   .rg-table th { text-align: left; color: var(--muted); font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .04em; border-bottom: 1px solid #e7edf3; padding: 8px 6px; }
   .rg-table td { border-bottom: 1px solid #eef3f8; padding: 9px 6px; vertical-align: top; color: var(--ink); }
   .rg-table td.num, .rg-table th.num { text-align: right; font-family: var(--font-mono); }
+  .rg-matrix-wrap { overflow-x: auto; border: 1px solid #e5ebf2; border-radius: 14px; background: #ffffff; }
+  .rg-health-matrix { min-width: 760px; }
+  .rg-health-matrix th:first-child, .rg-health-matrix td:first-child { min-width: 230px; }
+  .rg-health-matrix td.matrix-strong { color: var(--green); font-weight: 800; }
+  .rg-health-matrix td.matrix-risk { color: var(--rust); font-weight: 800; }
   .rg-th-help { position: relative; display: inline-flex; align-items: center; gap: 4px; }
   .rg-info-dot { width: 15px; height: 15px; display: inline-grid; place-items: center; border-radius: 999px; border: 1px solid #b7c6d6; color: #496477; background: #f8fbfd; font-family: var(--font-mono); font-size: 10px; font-weight: 900; cursor: help; }
   .rg-info-dot::after { content: attr(data-tip); position: absolute; z-index: 900; left: 0; top: calc(100% + 8px); width: 240px; padding: 9px 10px; border-radius: 10px; background: #14213d; color: #ffffff; box-shadow: 0 14px 30px rgba(20,33,61,.22); font-family: var(--font-body); font-size: 11.5px; line-height: 1.45; letter-spacing: 0; text-transform: none; text-align: left; opacity: 0; pointer-events: none; transform: translateY(-3px); transition: opacity .15s ease, transform .15s ease; }
@@ -341,6 +350,10 @@
         <div class="rg-controls">
           <input type="text" id="rg-q" class="rg-keyword-input" placeholder='Try "pilates"' />
           <button id="rg-search-btn" class="rg-search-btn">Search</button>
+          <input type="text" id="rg-business-type-q" class="rg-business-type-input" placeholder="Business type, e.g. restaurants" />
+          <button id="rg-business-type-search-btn" class="rg-search-btn rg-business-type-btn">Search type</button>
+          <input type="text" id="rg-place-q" class="rg-place-search-input" placeholder="Town or postcode prefix, e.g. Bristol or SW1" />
+          <button id="rg-place-search-btn" class="rg-search-btn rg-place-search-btn">Search place</button>
           <div class="rg-status-panel">
             <div class="rg-status-panel-head"><strong>Company status</strong><span>Select one or more, or use All status.</span></div>
             <div class="rg-status-group" id="rg-status-group">${categoryButtons}</div>
@@ -381,6 +394,8 @@
 
   const els = {
     q: root.querySelector("#rg-q"), export: root.querySelector("#rg-export"),
+    businessTypeQ: root.querySelector("#rg-business-type-q"), businessTypeSearchBtn: root.querySelector("#rg-business-type-search-btn"),
+    placeQ: root.querySelector("#rg-place-q"), placeSearchBtn: root.querySelector("#rg-place-search-btn"),
     explorePlace: root.querySelector("#rg-explore-place"), exploreAutocomplete: root.querySelector("#rg-explore-place-autocomplete"), clearPlace: root.querySelector("#rg-clear-place"),
     statusGroup: root.querySelector("#rg-status-group"), count: root.querySelector("#rg-count"),
     list: root.querySelector("#rg-list"), detail: root.querySelector("#rg-detail"), heatSummary: root.querySelector("#rg-heat-summary"), heatModeButtons: root.querySelectorAll(".rg-map-mode-btn"), heatDotsToggle: root.querySelector("#rg-heat-dots-toggle"),
@@ -399,7 +414,7 @@
   function escapeHtml(str) { return String(str ?? "").replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function params() {
     const cat = Array.isArray(categoryFilter) ? (categoryFilter.length ? categoryFilter.join('|') : '') : (categoryFilter || '');
-    return { q: els.q.value.trim(), place: els.explorePlace?.value?.trim() || '', category: cat };
+    return { q: els.q.value.trim(), place: els.explorePlace?.value?.trim() || '', business_type: els.businessTypeQ?.value?.trim() || '', category: cat };
   }
   function paramsToQuery(extra = {}) { const p = new URLSearchParams({ ...params(), ...extra }); return p.toString(); }
   function setLiveBadge() { /* badge removed from UI; keep isLive state for logic only */ }
@@ -430,11 +445,13 @@
   function applyDemoFilters() {
     const q = els.q.value.trim().toLowerCase();
     const place = els.explorePlace?.value?.trim().toLowerCase() || "";
+    const businessType = els.businessTypeQ?.value?.trim().toLowerCase() || "";
     return DEMO_DATA.filter((item) => {
       const matchesQ = !q || item.company_name.toLowerCase().includes(q) || (item.sic_text || "").toLowerCase().includes(q);
       const matchesPlace = !place || (item.town || "").toLowerCase().includes(place) || (item.postcode || "").toLowerCase().includes(place);
+      const matchesBusinessType = !businessType || (item.sic_text || "").toLowerCase().includes(businessType);
       const matchesCategory = !categoryFilter || (Array.isArray(categoryFilter) ? categoryFilter.length === 0 || categoryFilter.includes(item.status_category) : item.status_category === categoryFilter);
-      return matchesQ && matchesPlace && matchesCategory;
+      return matchesQ && matchesPlace && matchesBusinessType && matchesCategory;
     });
   }
 
@@ -479,6 +496,12 @@
     }
     const towns = groupStats(groupBy(items, i => i.town), "town");
     const sectors = groupStats(groupBy(items, i => i.sic_text), "sic_text");
+    const healthMatrixRows = sectors.slice(0, 12).map(sector => {
+      const rows = items.filter(item => item.sic_text === sector.sic_text);
+      const categories = {};
+      rows.forEach(row => { categories[row.status_category] = (categories[row.status_category] || 0) + 1; });
+      return { sic_text: sector.sic_text, total: sector.count, active_rate: sector.active_rate, risk_rate: sector.risk_rate, categories };
+    });
     const points = [...groupBy(items, i => (i.postcode || '').split(' ')[0]).entries()].map(([outcode, rows]) => {
       const count = rows.length;
       return {
@@ -498,7 +521,7 @@
       trend.length >= 2 ? { sentiment: trend[trend.length-1].count >= trend[trend.length-2].count ? "positive" : "negative", title: "Newest companies", value: `${trend[trend.length-1].year}: ${trend[trend.length-1].count}`, note: `${trend[trend.length-2].year} had ${trend[trend.length-2].count}.` } : { sentiment: "neutral", title: "Newest companies", value: "Not enough data", note: "Use live data for a clearer view." },
       towns[0] ? { sentiment: "positive", title: "Best town to check", value: towns.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score)[0].town, note: "This town has the highest opportunity score in these results." } : { sentiment: "neutral", title: "No town found", value: "—", note: "Try a broader search." }
     ];
-    return { total_count: total, max_incorporation_year: maxYear, comparison_window: { recent: `${recentStart}-${maxYear}`, previous: `${prevStart}-${prevEnd}` }, status: { categories: categoryCounts, raw: [] }, trend, towns, sectors, rankings: { towns_by_opportunity: towns.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score), towns_by_risk: towns.slice().sort((a,b)=>b.risk_rate-a.risk_rate), sectors_by_opportunity: sectors.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score), sectors_by_risk: sectors.slice().sort((a,b)=>b.risk_rate-a.risk_rate) }, heatmap: { points, full_match_count: total, plotted_cells: points.length, note: "Demo points are fictional; live mode uses aggregated postcode districts." }, eureka };
+    return { total_count: total, max_incorporation_year: maxYear, comparison_window: { recent: `${recentStart}-${maxYear}`, previous: `${prevStart}-${prevEnd}` }, status: { categories: categoryCounts, raw: [] }, trend, towns, sectors, health_matrix: { columns: ["Active", "Active - At Risk", "Insolvency - Voluntary Arrangement", "Insolvency - Administration/Receivership", "Liquidation", "Other"], rows: healthMatrixRows }, rankings: { towns_by_opportunity: towns.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score), towns_by_risk: towns.slice().sort((a,b)=>b.risk_rate-a.risk_rate), sectors_by_opportunity: sectors.slice().sort((a,b)=>b.opportunity_score-a.opportunity_score), sectors_by_risk: sectors.slice().sort((a,b)=>b.risk_rate-a.risk_rate) }, heatmap: { points, full_match_count: total, plotted_cells: points.length, note: "Demo points are fictional; live mode uses aggregated postcode districts." }, eureka };
   }
 
   function renderBars(items, labelKey, valueKey, options = {}) {
@@ -559,6 +582,27 @@
     }).join('')}</div>`;
   }
 
+  function renderHealthMatrix(matrix) {
+    const rows = (matrix?.rows || []).slice(0, 12);
+    const columns = matrix?.columns || [];
+    if (!rows.length || !columns.length) return `<div class="rg-empty">No business health matrix yet.</div>`;
+    const compact = {
+      Active: 'Active',
+      'Active - At Risk': 'At risk',
+      'Insolvency - Voluntary Arrangement': 'CVA',
+      'Insolvency - Administration/Receivership': 'Admin',
+      Liquidation: 'Liquidation',
+      Other: 'Other'
+    };
+    return `<div class="rg-matrix-wrap"><table class="rg-table rg-health-matrix"><thead><tr><th>Business type</th><th class="num">Total</th>${columns.map(col => `<th class="num">${escapeHtml(compact[col] || col)}</th>`).join('')}<th class="num">Active %</th><th class="num">Risk %</th></tr></thead><tbody>${rows.map(row => {
+      const label = String(row.sic_text || 'Unknown').replace(/^\d+\s*-\s*/, '');
+      return `<tr><td title="${escapeHtml(row.sic_text)}">${escapeHtml(label)}</td><td class="num">${fmt(row.total)}</td>${columns.map(col => {
+        const cls = col === 'Active' ? 'matrix-strong' : (NEGATIVE_CATEGORIES.has(col) ? 'matrix-risk' : '');
+        return `<td class="num ${cls}">${fmt(row.categories?.[col] || 0)}</td>`;
+      }).join('')}<td class="num matrix-strong">${row.active_rate ?? pct(row.categories?.Active || 0, row.total)}%</td><td class="num matrix-risk">${row.risk_rate ?? '0.0'}%</td></tr>`;
+    }).join('')}</tbody></table></div>`;
+  }
+
   function renderSectorChips(sectors) {
     const rows = (sectors || []).slice(0, 7);
     if (!rows.length) return `<div class="rg-empty">No sector data yet.</div>`;
@@ -595,6 +639,11 @@
     const previous = trend.length > 1 ? trend[trend.length - 2] : null;
     const topTown = (ins.rankings?.towns_by_opportunity || [])[0];
     const topSector = (ins.sectors || [])[0];
+    const placeLabel = (ins.filters?.place || '').trim();
+    const keywordLabel = (ins.filters?.q || '').trim();
+    const businessTypeLabel = (ins.filters?.business_type || '').trim();
+    const isPlaceOnly = !!placeLabel && !keywordLabel && !businessTypeLabel;
+    const isBusinessTypeOnly = !!businessTypeLabel && !keywordLabel && !placeLabel;
     const statusRows = Object.entries(cat).map(([name,count]) => ({ name, count })).sort((a,b)=>b.count-a.count);
     const carefulTowns = (ins.towns || ins.rankings?.towns_by_opportunity || ins.rankings?.towns_by_risk || [])
       .slice()
@@ -605,14 +654,28 @@
       : 'There is not enough yearly history yet to call the direction.';
     const sectorName = topSector ? String(topSector.sic_text || '').replace(/^\d+\s*-\s*/, '') : 'the searched sector';
     const townName = topTown ? topTown.town : 'No clear town yet';
+    const reportTitle = isPlaceOnly
+      ? `${fmt(total)} registered businesses found in ${placeLabel.toUpperCase()}`
+      : (isBusinessTypeOnly ? `${fmt(total)} registered businesses found for ${businessTypeLabel}` : `A ${healthTone} market with ${fmt(total)} matching companies`);
+    const reportCopy = isPlaceOnly
+      ? `This location view shows all matching registered businesses for ${placeLabel.toUpperCase()}, split by business type, registration history and health status. Use the company list for the individual records behind the summary.`
+      : (isBusinessTypeOnly
+        ? `This business-type view searches SIC descriptions for ${businessTypeLabel}, then shows where those companies are registered, how formation has changed over time and how healthy the status mix looks.`
+        : `The strongest read is ${townName} for location focus and ${sectorName} as the most common business type. Use this page as a quick market read before moving into the map, trends or company list.`);
+    const focusValue = isPlaceOnly ? sectorName : townName;
+    const focusCopy = isPlaceOnly
+      ? 'This is the largest business type in the place search, useful for understanding the local commercial mix.'
+      : (isBusinessTypeOnly
+        ? 'This is the strongest location cluster for the selected business type.'
+        : 'This is the best first place to inspect because it combines activity, health and local density.');
 
     return `
       <div class="rg-report">
         <section class="rg-report-hero">
           <div>
             <p class="rg-report-kicker">Overview brief</p>
-            <h3 class="rg-report-title">A ${healthTone} market with ${fmt(total)} matching companies</h3>
-            <p class="rg-report-copy">The strongest read is ${escapeHtml(townName)} for location focus and ${escapeHtml(sectorName)} as the most common business type. Use this page as a quick market read before moving into the map, trends or company list.</p>
+            <h3 class="rg-report-title">${escapeHtml(reportTitle)}</h3>
+            <p class="rg-report-copy">${escapeHtml(reportCopy)}</p>
           </div>
           <div class="rg-report-stats">
             <div class="rg-stat-line"><span>Active</span><strong>${activeRate}%</strong></div>
@@ -624,7 +687,7 @@
         <div class="rg-insight-grid">
           <div class="rg-insight-card ${riskRate >= 20 ? 'warning' : 'positive'}"><h3>Health</h3><span class="rg-insight-value">${riskRate < 10 ? 'Low risk' : (riskRate < 20 ? 'Watch list' : 'Higher risk')}</span><p>${fmt(active)} companies are active. ${fmt(risk)} are in an at-risk, insolvency or liquidation status.</p></div>
           <div class="rg-insight-card ${latest && previous && latest.count < previous.count ? 'negative' : 'positive'}"><h3>Momentum</h3><span class="rg-insight-value">${latest ? latest.year : '—'}</span><p>${escapeHtml(activityText)}</p></div>
-          <div class="rg-insight-card positive"><h3>Focus</h3><span class="rg-insight-value">${escapeHtml(townName)}</span><p>This is the best first place to inspect because it combines activity, health and local density.</p></div>
+          <div class="rg-insight-card positive"><h3>Focus</h3><span class="rg-insight-value">${escapeHtml(focusValue)}</span><p>${escapeHtml(focusCopy)}</p></div>
         </div>
 
         <div class="rg-split">
@@ -636,6 +699,8 @@
           <div class="rg-cardbox"><h3 class="rg-section-title">Business types</h3><p class="rg-section-sub">The main types of companies found in this search.</p>${renderSectorChips(ins.sectors || [])}</div>
           <div class="rg-cardbox"><h3 class="rg-section-title">Where to look first</h3><p class="rg-section-sub">A short location list instead of a dense table. Higher score means a better first research target.</p>${renderTownShortlist(ins.rankings?.towns_by_opportunity || [])}</div>
         </div>
+
+        <div class="rg-cardbox"><h3 class="rg-section-title">Health matrix by business type</h3><p class="rg-section-sub">Each row is a business type in this result set, split by status category so you can spot resilient and stressed segments quickly.</p>${renderHealthMatrix(ins.health_matrix)}</div>
 
         <div class="rg-map-layout">
           <div class="rg-map-card">
@@ -940,6 +1005,50 @@
     setExploreLoading();
     await doSearch(true);
   });
+  if (els.placeSearchBtn) els.placeSearchBtn.addEventListener('click', async () => {
+    const place = els.placeQ?.value?.trim() || '';
+    if (!place) {
+      els.placeQ?.focus();
+      return;
+    }
+    els.q.value = '';
+    if (els.businessTypeQ) els.businessTypeQ.value = '';
+    if (els.explorePlace) els.explorePlace.value = place;
+    if (els.clearPlace) els.clearPlace.hidden = false;
+    activateMenu('explore');
+    setExploreLoading();
+    await doSearch(true);
+  });
+  if (els.businessTypeSearchBtn) els.businessTypeSearchBtn.addEventListener('click', async () => {
+    const businessType = els.businessTypeQ?.value?.trim() || '';
+    if (!businessType) {
+      els.businessTypeQ?.focus();
+      return;
+    }
+    els.q.value = '';
+    if (els.explorePlace) els.explorePlace.value = '';
+    if (els.placeQ) els.placeQ.value = '';
+    if (els.clearPlace) els.clearPlace.hidden = true;
+    activateMenu('explore');
+    setExploreLoading();
+    await doSearch(true);
+  });
+  if (els.placeQ) {
+    els.placeQ.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        els.placeSearchBtn?.click();
+      }
+    });
+  }
+  if (els.businessTypeQ) {
+    els.businessTypeQ.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        els.businessTypeSearchBtn?.click();
+      }
+    });
+  }
   // Set up town autocomplete
   const uniqueTowns = [...new Set(DEMO_DATA.map(d => d.town).sort())];
   // Set up Explore page town filter with autocomplete
@@ -963,6 +1072,7 @@
       updateClearPlace();
     }
     els.explorePlace.addEventListener('input', (e) => {
+      if (els.placeQ) els.placeQ.value = e.target.value;
       showPlaceSuggestions(e.target.value);
       debouncedSearch();
     });
@@ -972,6 +1082,7 @@
     els.exploreAutocomplete.addEventListener('click', (e) => {
       if (e.target.classList.contains('rg-place-option')) {
         els.explorePlace.value = e.target.textContent;
+        if (els.placeQ) els.placeQ.value = els.explorePlace.value;
         els.exploreAutocomplete.classList.remove('active');
         updateClearPlace();
         setExploreLoading();
@@ -981,6 +1092,7 @@
     if (els.clearPlace) {
       els.clearPlace.addEventListener('click', () => {
         els.explorePlace.value = '';
+        if (els.placeQ) els.placeQ.value = '';
         els.exploreAutocomplete.classList.remove('active');
         updateClearPlace();
         setExploreLoading();
