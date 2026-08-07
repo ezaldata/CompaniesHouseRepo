@@ -36,7 +36,6 @@ from __future__ import annotations
 
 import csv
 import io
-import math
 import os
 import time
 import zipfile
@@ -315,12 +314,37 @@ def _comparison_max_year(max_year: int) -> int:
     return max_year
 
 
+OPPORTUNITY_WEIGHTS = {
+    "recent_rate": 40,
+    "active_rate": 25,
+    "growth": 15,
+    "risk_rate": 20,
+}
+
+
+def _growth_score(recent: int, previous: int) -> float:
+    """Normalize acceleration onto a 0-100 scale for weighted scoring."""
+    if previous == 0:
+        return 100.0 if recent > 0 else 0.0
+    growth_pct = ((recent - previous) / previous) * 100
+    return max(0.0, min(100.0, (growth_pct + 50) * (100 / 150)))
+
+
 def _score_opportunity(count: int, active_rate: float, risk_rate: float, recent: int, previous: int) -> float:
     # The point is not a perfect econometric model. It is a prioritisation lens:
-    # strong recent formation + healthy status mix + less saturation gets surfaced.
-    growth_bonus = 20 if previous == 0 and recent > 0 else max(-20, min(30, (_growth_pct(recent, previous) or 0) / 4))
-    density_penalty = math.log10(max(count, 1)) * 3.5
-    return round((recent * 1.8) + (active_rate * 0.35) - (risk_rate * 0.9) + growth_bonus - density_penalty, 1)
+    # strong recent formation share + healthy status mix + lower stress gets surfaced.
+    # All four inputs are 0-100 percentages, and the weights sum to 100 so their
+    # relative importance stays directly comparable.
+    recent_rate = _as_pct(recent, count)
+    growth_score = _growth_score(recent, previous)
+    weights = OPPORTUNITY_WEIGHTS
+    score = (
+        (recent_rate * weights["recent_rate"])
+        + (active_rate * weights["active_rate"])
+        + (growth_score * weights["growth"])
+        - (risk_rate * weights["risk_rate"])
+    ) / 100
+    return round(score, 1)
 
 
 def _eureka_cards(total: int, trend: list[dict[str, Any]], towns: list[dict[str, Any]], sectors: list[dict[str, Any]], category_counts: dict[str, int], ranking_min_count: int = 5) -> list[dict[str, str]]:
@@ -366,7 +390,7 @@ def _eureka_cards(total: int, trend: list[dict[str, Any]], towns: list[dict[str,
             "sentiment": "positive",
             "title": "Where to look first",
             "value": best["town"],
-            "note": f"High opportunity score across {best['count']:,} companies: {best['recent_count']:,} recent incorporations, {best['risk_rate']}% risk rate, {best['active_rate']}% active.",
+            "note": f"High opportunity score across {best['count']:,} companies: {best.get('recent_rate', _as_pct(best['recent_count'], best['count']))}% formed recently, {best['risk_rate']}% risk rate, {best['active_rate']}% active.",
         })
 
     risky_towns = [t for t in towns if t.get("count", 0) >= max(5, ranking_min_count)]
@@ -549,14 +573,18 @@ def api_insights():
     for town, count, active, risk, recent, previous in town_rows:
         active_rate = _as_pct(active or 0, count or 0)
         risk_rate = _as_pct(risk or 0, count or 0)
+        recent_rate = _as_pct(recent or 0, count or 0)
+        growth_score = round(_growth_score(int(recent or 0), int(previous or 0)), 1)
         towns.append({
             "town": town,
             "count": int(count or 0),
             "active_count": int(active or 0),
             "risk_count": int(risk or 0),
             "recent_count": int(recent or 0),
+            "recent_rate": recent_rate,
             "previous_count": int(previous or 0),
             "growth_pct": _growth_pct(int(recent or 0), int(previous or 0)),
+            "growth_score": growth_score,
             "active_rate": active_rate,
             "risk_rate": risk_rate,
             "opportunity_score": _score_opportunity(int(count or 0), active_rate, risk_rate, int(recent or 0), int(previous or 0)),
@@ -581,14 +609,18 @@ def api_insights():
     for sic_text, count, active, risk, recent, previous in sector_rows:
         active_rate = _as_pct(active or 0, count or 0)
         risk_rate = _as_pct(risk or 0, count or 0)
+        recent_rate = _as_pct(recent or 0, count or 0)
+        growth_score = round(_growth_score(int(recent or 0), int(previous or 0)), 1)
         sectors.append({
             "sic_text": sic_text,
             "count": int(count or 0),
             "active_count": int(active or 0),
             "risk_count": int(risk or 0),
             "recent_count": int(recent or 0),
+            "recent_rate": recent_rate,
             "previous_count": int(previous or 0),
             "growth_pct": _growth_pct(int(recent or 0), int(previous or 0)),
+            "growth_score": growth_score,
             "active_rate": active_rate,
             "risk_rate": risk_rate,
             "opportunity_score": _score_opportunity(int(count or 0), active_rate, risk_rate, int(recent or 0), int(previous or 0)),
